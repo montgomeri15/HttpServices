@@ -54,53 +54,23 @@ global with sharing class JobAdvertisementEndpoint {
     @HttpDelete
  	global static void deletegetJobAdvertisement() {
         RestRequest req = RestContext.request;
-        String ourId = req.params.get('Id');
-        List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id, Position_ID__c FROM Job_Advertisement__c WHERE Position_ID__c =: ourId];
-        if(jobAdvertisementList != null){
-        	delete jobAdvertisementList;
+        String jobAdvId = req.params.get('Id');
+        Job_Advertisement__c jobAdvertisement = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvId];
+        if(jobAdvertisement != null){
+            delete jobAdvertisement;
         }
  	}
     
-    /*@HttpPut
- 	global static void updateAccount(String Id, String NewName) {
+    @HttpPatch
+    global static Id updateJobAdvertisement() {
         RestRequest req = RestContext.request;
-        String ourId = req.params.get('Id');
-   		Job_Advertisement__c jobAdvertisement = [SELECT Id, Position_ID__c FROM Job_Advertisement__c WHERE Position_ID__c =: ourId];
-   		jobAdvertisement.Name = NewName;
-   		update jobAdvertisement;
- 	}*/
-
-    /*@HttpPost
-    global static Job_Advertisement__c postJobAdvertisement(String title, String description, String skills, String education,
-                                                            String manager, String email, String phone, String status, String positionId){
-                                                                
-        Job_Advertisement__c thisJobAdvertisement = new Job_Advertisement__c(
-            Title__c = title,
-            Description__c = description,
-            Skills_Required__c = skills,
-            Education__c = education,
-            Manager_Name__c = manager,
-            Email__c = email,
-            Phone__c = phone,
-            Position_ID__c = positionId
-            );
-        upsert thisJobAdvertisement;
-        return thisJobAdvertisement;
-    }*/
-    
-    /*@HttpPost 
-     webservice static void DeleteJobAdvertisement(String someId)  
-     {
-        List<Job_Advertisement__c> jaList=[select Id from Job_Advertisement__c where Id = :someId];
-        Database.delete(jaList);
-     }*/
-
-    /*@HttpDelete
-    global static void doDelete() {
-        RestRequest req = RestContext.request;
-        RestResponse res = RestContext.response;
-        String accountId = req.requestURI.substring(req.requestURI.lastIndexOf('/')+1);
-        Job_Advertisement__c account = [SELECT Id FROM Job_Advertisement__c WHERE Id = :accountId];
-        delete account;
-    }*/
+        String jobAdvId = req.params.get('Id');
+        Job_Advertisement__c jobAdvertisement = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvId];
+        Map<String, Object> params = (Map<String, Object>)JSON.deserializeUntyped(req.requestbody.tostring());  //Десериализация JSON-а в мапу
+        for(String fieldName : params.keySet()) {
+            jobAdvertisement.put(fieldName, params.get(fieldName));
+        }
+        update jobAdvertisement;
+        return jobAdvertisement.Id;
+    }
 }
