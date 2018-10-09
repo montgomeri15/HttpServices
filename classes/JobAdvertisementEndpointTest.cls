@@ -29,6 +29,8 @@ private class JobAdvertisementEndpointTest {
 		return request;
 	}
     
+    //Test GET
+    
     @isTest
     static void testGetJobAdvertisementId() {
     	Job_Advertisement__c testRecord = createTestRecord();
@@ -58,6 +60,8 @@ private class JobAdvertisementEndpointTest {
         }
     }
     
+    //Test POST
+    
     @isTest
     static void testPostJobAdvertisement() { 
         Job_Advertisement__c testRecord = createTestRecord();
@@ -70,38 +74,36 @@ private class JobAdvertisementEndpointTest {
         System.assert(jobAdvertisementId != null);
     }
     
-    /*@isTest
-    static void testPostJobAdvertisement() {
+    @isTest
+    static void testNotPostJobAdvertisement() {
+        Job_Advertisement__c testRecord = createTestRecord();
+        String json = '12345';
+        RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.ParseRequest(request);
+        System.assertNotEquals(ourRecord, testRecord);
         
-        
+        Id jobAdvertisementId = JobAdvertisementEndpoint.doPost();
+        System.assert(jobAdvertisementId != null);
+    }
     
-    }*/
+    //Test DELETE
     
+    @isTest
+    static void testDeleteJobAdvertisementId() {
+    	Job_Advertisement__c testRecord = createTestRecord();
+        insert testRecord;
+        String json = System.JSON.serialize(testRecord);
+        RestRequest request = getRequest(json, 'DELETE', url+testRecord.Id);
+        request.addParameter('Id', testRecord.Id);
+        System.debug(testRecord.Id);
+        List<Job_Advertisement__c> j = [Select Position_ID__c from Job_Advertisement__c where Position_ID__c =: testRecord.Id];
+        JobAdvertisementEndpoint.deletegetJobAdvertisement();
+        System.assertEquals(j, null);        
+    }
     
     //List<Job_Advertisement__c> jlist = [SELECT Id, Title__c FROM Job_Advertisement__c];
     //System.assertEquals(1, jlist.size());
     
-	/*public static String GenerateJSON(App__c a){
-		Map<String, String> fieldMap = new Map<String, String>{
-			'Title__c' => a.Name};       
-        String serialized = JSON.serialize(fieldMap);         
-        return serialized;
-    }
-    
-	@isTest
-	static void testPost() {
-    	App__c record = createTestRecord();
-    	RestRequest request = new RestRequest();
-    	request.requestUri = System.URL.getSalesforceBaseUrl().toExternalForm() + '/services/apexrest/App__c/' + record.Id;
-    	request.httpMethod = 'POST';
-    	RestContext.request = request;
-    
-    	record = (App__c)JSON.deserialize(GenerateJSON(record), App__c.class);
-
-    	App__c j = Endpoint.ParseRequest(request);
-    	record = (App__c)JSON.deserialize(body, App__c.class);
-	}*/
-     
     /*@isTest
     static void testGetJobAdvertisement2() {
         RestRequest request = new RestRequest();
