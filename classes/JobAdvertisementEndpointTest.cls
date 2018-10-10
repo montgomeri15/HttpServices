@@ -11,9 +11,9 @@ private class JobAdvertisementEndpointTest {
             Education__c = 'Education',
             Manager_Name__c = 'Test Name',
             Email__c = 'Email@gmail.com',
-            Phone__c = '+3805454564564'
+            Phone__c = '+3805454564564',
+            Position_ID__c = '454545454'
         );
-        //insert jobAdvertisementTest;
         return jobAdvertisementTest;
     }
     
@@ -59,7 +59,7 @@ private class JobAdvertisementEndpointTest {
             System.assertEquals(jobAdvertisement.Id, testRecord.Id);
         }
     }
-    
+        
     //Test POST
     
     @isTest
@@ -67,55 +67,87 @@ private class JobAdvertisementEndpointTest {
         Job_Advertisement__c testRecord = createTestRecord();
         String json = System.JSON.serialize(testRecord);
         RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
-        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.ParseRequest(request);
-        System.assertEquals(testRecord, ourRecord);
-        
-        Id jobAdvertisementId = JobAdvertisementEndpoint.doPost();
-        System.assert(jobAdvertisementId != null);
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.doPost();
+        System.assertEquals(ourRecord.Title__c, testRecord.Title__c);
+        System.assert(ourRecord.Id != null);
+        List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Phone__c = '+3805454564564'];
+        System.assert(jobAdvertisementList.size() == 1);
     }
     
     @isTest
-    static void testNotPostJobAdvertisement() {
+    static void testPostJobAdvertisementJSONException() {
         Job_Advertisement__c testRecord = createTestRecord();
         String json = '12345';
         RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
-        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.ParseRequest(request);
-        System.assertNotEquals(ourRecord, testRecord);
-        Id jobAdvertisementId = JobAdvertisementEndpoint.doPost();
-        System.assert(jobAdvertisementId != null);
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.doPost();
+        System.assertEquals(ourRecord, null);
+        List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Phone__c = '+3805454564564'];
+        System.assert(jobAdvertisementList.size() == 0);
     }
     
-    //Тест DELETE
-    
     @isTest
-    static void testDeleteJobAdvertisementId() {
+    static void testNotPostJobAdvertisementException() {
         Job_Advertisement__c testRecord = createTestRecord();
         insert testRecord;
-        RestRequest request = new RestRequest();
-        request.requestUri = System.URL.getSalesforceBaseUrl().toExternalForm() + '/services/apexrest/Job_Advertisement__c/Position_ID__c/' + testRecord.Id;
-        request.httpMethod = 'GET';
-        RestContext.request = request;
-		JobAdvertisementEndpoint.deletegetJobAdvertisement();  //Вызываем метод
+        String json = System.JSON.serialize(testRecord);
+        RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.doPost();
+        System.assertEquals(ourRecord, null);
+    }
+    
+    //Test DELETE
+    
+    @isTest
+    static void testDeleteJobAdvertisement() {
+        Job_Advertisement__c testRecord = createTestRecord();
+        insert testRecord;
+        testRecord.Position_ID__c = testRecord.Id;
+        update testRecord;
+        RestRequest request = getRequest('', 'GET', url+testRecord.Id);
+        JobAdvertisementEndpoint.deleteJobAdvertisement();
+        List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
+        System.assert(jobAdvertisementList.size() == 0);
+    }
+    
+    @isTest
+    static void testDeleteJobAdvertisementException() {
+        Job_Advertisement__c testRecord = createTestRecord();
+        RestRequest request = getRequest('', 'GET', url+testRecord.Id);
         List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
         System.assert(jobAdvertisementList.size() == 0);      
     }
     
-    //Тест PUT(PATCH)
+    //Test PATCH
+
+    @isTest
+    static void testUpdateJobAdvertisementException() {
+        Job_Advertisement__c testRecord = createTestRecord();
+        insert testRecord;
+        testRecord.Position_ID__c = testRecord.Id;
+        update testRecord;
+        RestRequest request = getRequest('{"Title__c": "New"}', 'GET', url+testRecord.Id);
+        JobAdvertisementEndpoint.updateJobAdvertisement();
+        List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id, Title__c FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
+        System.debug(jobAdvertisementList);
+        System.assert(jobAdvertisementList.size() == 1);
+        for(Job_Advertisement__c testJobAdvertisement : jobAdvertisementList){
+            System.assertEquals(testJobAdvertisement.Title__c, 'New');
+        }
+    }
     
     @isTest
     static void testUpdateJobAdvertisementId() {
         Job_Advertisement__c testRecord = createTestRecord();
         insert testRecord;
-        RestRequest request = new RestRequest();
-        request.requestUri = System.URL.getSalesforceBaseUrl().toExternalForm() + '/services/apexrest/Job_Advertisement__c/Position_ID__c/' + testRecord.Id;
-        request.httpMethod = 'PATCH';
-        request.addHeader('Content-Type', 'application/json');
-        request.requestBody = Blob.valueOf('{"Title__c": "New"}');  //Меняем запись 
-        RestContext.request = request;
-        Id jobAdvertisementId = JobAdvertisementEndpoint.updateJobAdvertisement();  //Апдейтим
-        System.assert(jobAdvertisementId != null);
-        Job_Advertisement__c updatedRecord = [SELECT Id, Title__c FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvertisementId];
-        System.assert(updatedRecord != null);
-        System.assertEquals(updatedRecord.Title__c, 'New');
+        testRecord.Position_ID__c = testRecord.Id;
+        update testRecord;
+        RestRequest request = getRequest('{"Title__c": "New"}', 'GET', url+testRecord.Id);
+        JobAdvertisementEndpoint.updateJobAdvertisement();
+        List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id, Title__c FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
+        System.debug(jobAdvertisementList);
+        System.assert(jobAdvertisementList.size() == 1);
+        for(Job_Advertisement__c testJobAdvertisement : jobAdvertisementList){
+            System.assertEquals(testJobAdvertisement.Title__c, 'New');
+        }
     }  
 }

@@ -22,55 +22,73 @@ global with sharing class JobAdvertisementEndpoint {
         return jobAdvList;
     }
     
-    public static Job_Advertisement__c ParseRequest(RestRequest req) {
-		Job_Advertisement__c job = new Job_Advertisement__c();
+    @HttpPost
+    global static Job_Advertisement__c doPost() {
+        RestRequest req = RestContext.request;  //Возвращает RestRequest для метода Apex REST          
+        Job_Advertisement__c job = new Job_Advertisement__c();
         String body = req.requestBody.toString();
-        
         RestResponse res = new RestResponse();
         RestContext.response = res;
         
         try{
         	job = (Job_Advertisement__c)JSON.deserialize(body, Job_Advertisement__c.class);
+            insert job;
             res.responseBody = Blob.valueOf(JSON.serialize(job));
             res.statusCode = 200;
+            return job;
         } catch(JSONException e){
             res.responseBody = Blob.valueOf(e.getMessage());
-            res.statusCode = 400;   
-        } catch (Exception e) {
+            res.statusCode = 400;
+        } catch(Exception e) {
             res.responseBody = Blob.valueOf(String.valueOf(e) + '\n' + e.getStackTraceString());
             res.statusCode = 500;
-        }
-        return job;
-	}
-    
-    @HttpPost
-    global static Id doPost() {
-        RestRequest req = RestContext.request;  //Возвращает RestRequest для метода Apex REST          
-        Job_Advertisement__c job = ParseRequest(req);
-        insert job;
-        return job.Id;
+        } 
+        return null;
     }
     
     @HttpDelete
- 	global static void deletegetJobAdvertisement() {
-        RestRequest req = RestContext.request;
-        String jobAdvId = req.params.get('Id');
-        Job_Advertisement__c jobAdvertisement = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvId];
-        if(jobAdvertisement != null){
+ 	global static void deleteJobAdvertisement() {
+        RestRequest request = RestContext.request;
+        String jobAdvId = request.requestURI.substring(request.requestURI.lastIndexOf('/')+1);
+        RestResponse res = new RestResponse();
+        RestContext.response = res;
+        
+        try{
+        	Job_Advertisement__c jobAdvertisement = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvId];
             delete jobAdvertisement;
-        }
+            res.responseBody = Blob.valueOf(JSON.serialize(jobAdvertisement));
+            res.statusCode = 200;
+        } catch(DMLException e){
+            res.responseBody = Blob.valueOf(e.getMessage());
+            res.statusCode = 400;
+        } catch(Exception e) {
+            res.responseBody = Blob.valueOf(String.valueOf(e) + '\n' + e.getStackTraceString());
+            res.statusCode = 500;
+        } 
  	}
     
     @HttpPatch
-    global static Id updateJobAdvertisement() {
-        RestRequest req = RestContext.request;
-        String jobAdvId = req.params.get('Id');
-        Job_Advertisement__c jobAdvertisement = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvId];
-        Map<String, Object> params = (Map<String, Object>)JSON.deserializeUntyped(req.requestbody.tostring());  //Десериализация JSON-а в мапу
-        for(String fieldName : params.keySet()) {
-            jobAdvertisement.put(fieldName, params.get(fieldName));
-        }
-        update jobAdvertisement;
-        return jobAdvertisement.Id;
+    global static void updateJobAdvertisement() {
+        RestRequest request = RestContext.request;
+        String jobAdvId = request.requestURI.substring(request.requestURI.lastIndexOf('/')+1);
+        RestResponse res = new RestResponse();
+        RestContext.response = res;
+        
+        try{
+        	Job_Advertisement__c jobAdvertisement = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: jobAdvId];
+        	Map<String, Object> params = (Map<String, Object>)JSON.deserializeUntyped(request.requestbody.tostring());
+    		for(String fieldName : params.keySet()) {
+        		jobAdvertisement.put(fieldName, params.get(fieldName));
+    		}
+        	update jobAdvertisement;
+            res.responseBody = Blob.valueOf(JSON.serialize(jobAdvertisement));
+            res.statusCode = 200;
+        } catch(DMLException e){
+            res.responseBody = Blob.valueOf(e.getMessage());
+            res.statusCode = 400;
+        } catch(Exception e) {
+            res.responseBody = Blob.valueOf(String.valueOf(e) + '\n' + e.getStackTraceString());
+            res.statusCode = 500;
+        } 
     }
 }
