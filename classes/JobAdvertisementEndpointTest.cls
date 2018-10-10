@@ -112,7 +112,9 @@ private class JobAdvertisementEndpointTest {
     @isTest
     static void testDeleteJobAdvertisementException() {
         Job_Advertisement__c testRecord = createTestRecord();
+        insert testRecord;
         RestRequest request = getRequest('', 'GET', url+testRecord.Id);
+        JobAdvertisementEndpoint.deleteJobAdvertisement();
         List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
         System.assert(jobAdvertisementList.size() == 0);      
     }
@@ -120,7 +122,7 @@ private class JobAdvertisementEndpointTest {
     //Test PATCH
 
     @isTest
-    static void testUpdateJobAdvertisementException() {
+    static void testUpdateJobAdvertisement() {
         Job_Advertisement__c testRecord = createTestRecord();
         insert testRecord;
         testRecord.Position_ID__c = testRecord.Id;
@@ -136,18 +138,12 @@ private class JobAdvertisementEndpointTest {
     }
     
     @isTest
-    static void testUpdateJobAdvertisementId() {
+    static void testUpdateJobAdvertisementException() {
         Job_Advertisement__c testRecord = createTestRecord();
-        insert testRecord;
-        testRecord.Position_ID__c = testRecord.Id;
-        update testRecord;
-        RestRequest request = getRequest('{"Title__c": "New"}', 'GET', url+testRecord.Id);
+        RestRequest request = getRequest('{"Position_ID__c": "12345"}', 'GET', url+testRecord.Id);
         JobAdvertisementEndpoint.updateJobAdvertisement();
         List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id, Title__c FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
         System.debug(jobAdvertisementList);
-        System.assert(jobAdvertisementList.size() == 1);
-        for(Job_Advertisement__c testJobAdvertisement : jobAdvertisementList){
-            System.assertEquals(testJobAdvertisement.Title__c, 'New');
-        }
+        System.assert(jobAdvertisementList.size() == 0);
     }  
 }
