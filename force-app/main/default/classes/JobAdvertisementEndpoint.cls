@@ -45,7 +45,7 @@ global with sharing class JobAdvertisementEndpoint {
     }
     
     @HttpPost
-    global static Job_Advertisement__c doPost() {
+    global static Job_Advertisement__c postJobAdvertisement() {
         RestRequest req = RestContext.request;  //Возвращает RestRequest для метода Apex REST          
         Job_Advertisement__c job = new Job_Advertisement__c();
         String body = req.requestBody.toString();

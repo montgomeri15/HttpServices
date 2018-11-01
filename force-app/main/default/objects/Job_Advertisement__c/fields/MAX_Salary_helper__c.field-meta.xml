@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MAX_Salary_helper__c</fullName>
+    <externalId>false</externalId>
+    <formula>MID(
+    TEXT(Salary__c),
+    FIND(&quot;-&quot;, TEXT(Salary__c))+1,
+    LEN(TEXT(Salary__c))-FIND(&quot;-&quot;, TEXT(Salary__c))
+    )</formula>
+    <label>MAX Salary helper</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

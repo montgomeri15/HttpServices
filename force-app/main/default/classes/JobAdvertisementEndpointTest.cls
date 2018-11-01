@@ -81,7 +81,7 @@ private class JobAdvertisementEndpointTest {
         Job_Advertisement__c testRecord = createTestRecord();
         String json = System.JSON.serialize(testRecord);
         RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
-        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.doPost();
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.postJobAdvertisement();
         System.assertEquals(ourRecord.Title__c, testRecord.Title__c);
         System.assert(ourRecord.Id != null);
         List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Phone__c = '+3805454564564'];
@@ -93,7 +93,7 @@ private class JobAdvertisementEndpointTest {
         Job_Advertisement__c testRecord = createTestRecord();
         String json = '12345';
         RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
-        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.doPost();
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.postJobAdvertisement();
         System.assertEquals(ourRecord, null);
         List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id FROM Job_Advertisement__c WHERE Phone__c = '+3805454564564'];
         System.assert(jobAdvertisementList.size() == 0);
@@ -105,7 +105,7 @@ private class JobAdvertisementEndpointTest {
         insert testRecord;
         String json = System.JSON.serialize(testRecord);
         RestRequest request = getRequest(json, 'POST', url+testRecord.Id);
-        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.doPost();
+        Job_Advertisement__c ourRecord = JobAdvertisementEndpoint.postJobAdvertisement();
         System.assertEquals(ourRecord, null);
     }
     
@@ -141,7 +141,7 @@ private class JobAdvertisementEndpointTest {
         insert testRecord;
         testRecord.Position_ID__c = testRecord.Id;
         update testRecord;
-        RestRequest request = getRequest('{"Title__c": "New"}', 'GET', url+testRecord.Id);
+        RestRequest request = getRequest('{"Title__c":"New"}', 'GET', url+testRecord.Id);
         JobAdvertisementEndpoint.updateJobAdvertisement();
         List<Job_Advertisement__c> jobAdvertisementList = [SELECT Id, Title__c FROM Job_Advertisement__c WHERE Position_ID__c =: testRecord.Id];
         System.debug(jobAdvertisementList);

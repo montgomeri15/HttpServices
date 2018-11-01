@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Salary__c</fullName>
+    <fullName>Temporary_Status__c</fullName>
     <externalId>false</externalId>
-    <label>Salary</label>
+    <label>Temporary Status</label>
     <required>false</required>
     <trackTrending>false</trackTrending>
-    <type>Picklist</type>
+    <type>MultiselectPicklist</type>
     <valueSet>
         <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>50K-75K</fullName>
+                <fullName>Active</fullName>
                 <default>false</default>
-                <label>50K-75K</label>
+                <label>Active</label>
             </value>
             <value>
-                <fullName>75K-90K</fullName>
+                <fullName>On hold</fullName>
                 <default>false</default>
-                <label>75K-90K</label>
+                <label>On hold</label>
             </value>
             <value>
-                <fullName>90K-120K</fullName>
+                <fullName>Archived</fullName>
                 <default>false</default>
-                <label>90K-120K</label>
-            </value>
-            <value>
-                <fullName>120K+</fullName>
-                <default>false</default>
-                <label>120K+</label>
+                <label>Archived</label>
             </value>
         </valueSetDefinition>
     </valueSet>
+    <visibleLines>4</visibleLines>
 </CustomField>
