@@ -4,13 +4,15 @@ private class JobAdvertisementControllerTest {
     
     static Job_Advertisement__c createTestRecord() {  //Тестовый Job_Advertisement__c
         Job_Advertisement__c jobAdvertisementTest = new Job_Advertisement__c (Name = 'Test',
-                                                                          Location__c = 'CA',
-                                                                          Description__c = 'Description',
-                                                                          Salary__c = '50K-75K',
-                                                                          Skills_Required__c = 'Some skills',
-                                                                          Education__c = 'Some education',
-                                                                          Manager_Name__c = 'Manager',
-                                                                          Status__c = 'Active');
+                                                                          	  Location__c = 'CA',
+                                                                          	  Description__c = 'Description',
+                                                                          	  Salary__c = '50K-75K',
+                                                                          	  Skills_Required__c = 'Some skills',
+                                                                          	  Education__c = 'Some education',
+                                                                          	  Manager_Name__c = 'Manager',
+                                                                          	  Status__c = 'Active');
+        
+        																	 	
         return jobAdvertisementTest;
     }
     
@@ -69,7 +71,7 @@ private class JobAdvertisementControllerTest {
         System.assertEquals(controllerClass.noOfRecords, 1);
     }
     
-    //BAD SCENARIO
+    //BAD SCENARIOS
     
     @isTest
     static void testWrongName() {
@@ -246,6 +248,4 @@ private class JobAdvertisementControllerTest {
         PageReference result = controllerClass.searchByParameters();
         System.assertEquals(controllerClass.noOfRecords, 0);
     }
-    
-
 }

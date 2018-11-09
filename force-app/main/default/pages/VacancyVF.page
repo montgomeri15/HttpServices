@@ -1,0 +1,328 @@
+<apex:page controller="VacancyController" docType="html-5.0" showHeader="false" sidebar="false" lightningStylesheets="true">
+    <apex:pageMessages />
+   
+    <head>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    
+		<style>    
+            .container{
+        		width: 100%;
+    		}     
+    		.column1 {
+				width: 50%;
+        		float: left;
+        		margin-top: 10px;
+    			margin-left: 16.5%;
+        		margin-bottom: 10px; 
+    		}
+    		.column2 {
+				width: 17%;
+        		float: right;
+        		margin-top: 10px;
+    			margin-right: 16.5%;
+        		margin-bottom: 10px; 
+    		}
+        
+    		.div-filters{
+        		display: inline-block;
+        		margin-top: 10px;
+    			margin-right: 10px;
+    			margin-left: 10px;
+        		width: 100%;
+    		}
+    
+    		.div-bigpanel-label {
+    			margin-top: 10px;
+    			margin-right: 10px;
+    			margin-left: 10px;
+    			padding: 10px;
+	    		border: 2px solid #e0ebeb;
+    			border-radius: 5px;
+        		width: 98%;
+        		height: 80px;
+			}
+    		.div-bigpanel-show-hide {
+        		display: none;
+    			margin-right: 10px;
+    			margin-left: 10px;
+  				transition: all linear 0.5s;
+    			overflow: visible;
+  				transition: all linear 0.5s;
+  				background-color: #66c2ff;
+    			border: 1px solid #94b8b8;
+        		border-radius: 0px 0px 5px 5px;
+        		height: 195px;
+        		width: 98%;
+			}
+    		.block {
+    			display: block;
+			}
+
+    		.div-detailed-info {
+				line-height: 120px;
+    			text-align: center;
+    		}
+    		.div-button-select {
+        		margin-right: 40px;
+    			text-align: right;
+    		}
+    		.button-select {
+        		background-color: #ffbb33;
+    			border: none;
+        		border-radius: 7px;
+    			color: white;
+    			padding: 5px 20px;
+    			font-size: 18px;
+    			cursor: pointer;
+    		}
+        
+			.div-checkbox-big-panel input[type="checkbox"] {
+    			display:none;
+			}
+			.div-checkbox-big-panel input[type="checkbox"] + label {
+    			background: url(https://image.ibb.co/gJ0xV0/sfsf.png) 0 0 no-repeat;
+    			height: 16px;
+    			width: 16px;
+    			padding: 0 0 0 0px;
+        		cursor: pointer;
+			}
+			.div-checkbox-big-panel input[type="checkbox"]:checked + label {
+    			background: url(https://image.ibb.co/gRMonf/sfsf-Copy-Convert-Image.png) 0 0 no-repeat;     
+    			height: 16px;
+    			width: 16px;
+    			padding: 0 0 0 0px;
+        		cursor: pointer;
+			}                                   
+        
+    		.div-selected-options {
+        		display: inline-block;
+  				width: 100%;
+    		}  
+    		.label-counter {
+        		background-color: #ffbb33;
+        		border-radius: 25px;     
+        		color: white;
+        		padding: 5px 7px;
+    		}
+                        
+    		.div-smallpanel-label {
+    			margin-top: 10px;
+    			margin-right: 10px;
+    			margin-left: 10px;
+    			padding: 10px;
+    			border: 2px solid #e0ebeb;
+    			border-radius: 5px;
+        		width: 85%;
+        		height: 80px;
+			}
+                        
+    		.div-pagination {
+        		background-color: #ffffff;
+        		border: 1px solid #e0ebeb;
+        		padding: 5px;
+        		position: fixed;
+        		bottom: 0;
+    		}
+        
+    		.custPopup{
+        		background-color: white;
+        		border-width: 2px;
+        		border-style: solid;
+        		left: calc(50% - 50px);
+        		padding:10px;
+        		position:fixed;
+        		width: 500px;
+        		height: 500px;
+        		margin-left: -200px;
+        		top:200px;
+    		}
+    		.popupBackground{
+        		background-color:black;
+        		opacity: 0.20;
+        		filter: alpha(opacity = 20);
+        		position:fixed;
+        		width: 100%;
+        		height: 100%;
+        		top: 0;
+        		left: 0;
+    		}
+			a:hover {
+    			background-color: #ADFF2F;
+            	color: black;
+    		}
+		</style>
+    </head>
+    
+    <script>
+		function myFunction() {
+    		var list = document.getElementsByClassName("list-of-objects");
+			var check = document.getElementsByClassName("check");
+    		var content = document.getElementsByClassName("div-bigpanel-show-hide");
+
+			for (i = 0; i < list.length; i++) {
+        		if(check[i].checked) {
+            		content[i].style.display = "block";
+    			} else {
+      				content[i].style.display = "none";
+    			}
+			}	
+		}
+	</script>
+               
+	<html>
+    	<apex:form >
+        	<apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pageBlockId"/>  
+        	<apex:pageBlock id="pageBlockId">
+				<body>          
+                     
+    				<div class="main">
+        				<div class="container">
+            				<div class="column1"> 
+                        		<div class="div-filters">
+                            		<apex:inputText value="{!soughtName}" style="border-radius: 5px 0px 0px 5px; margin-right: -8px; height: 42px; width: 30%" html-placeholder="Name of the Vacancy"  />
+                            		<apex:input type="date" value="{!soughtPublishedDate}" style="border-radius: 0px; margin-right: -8px; height: 43px; width: 30%" html-placeholder="Published Date"  />
+                            		<apex:selectList value="{!soughtSalary}" style="border-radius: 0px; margin-top: -50px; height: 42px; width: 20%" html-placeholder="Salary range" size="1">
+                                		<apex:selectOptions value="{!salaryRangeOptions}"/>
+                            		</apex:selectList>
+                            		<apex:commandButton style="background-color: #ffbb33; border-radius: 0px 5px 5px 0px; margin-left: -1px; color: white; padding: 5px 25px; font-size: 16px; cursor: pointer; height: 44px; width: 18%"
+                                                		action="{!searchByParameters}" id="searchButtonId" value="SEARCH"/>
+                        		</div>
+                        
+                        		<apex:outputPanel id="filteredJobAdvs" >   
+                        			<apex:repeat value="{!JobAdvertisementList}" var="jobAdv">
+                            			<div class="list-of-objects">
+                            				<div class="div-bigpanel-label">
+    											<apex:outputText style="font-weight:800" value="{!jobAdv.Name}"/>
+                                				<div class="div-checkbox-big-panel">
+            										<apex:outputText value="{!jobAdv.Salary__c}"/>
+    												<span style="float: right">
+                                        				<input class="check" onclick="myFunction()" type="checkbox" id="{!jobAdv.Id}" /><label for="{!jobAdv.Id}"></label>
+            										</span>  
+												</div>
+                                				<apex:outputText value="{!jobAdv.Location__c}"/>
+    										</div>
+                            
+                            
+                           		 			<div class="div-bigpanel-show-hide">     
+                            					<div class="div-detailed-info">
+                                    				<h2>Detailed INFO about {!jobAdv.Name}</h2>
+                            					</div>
+        										<div class="div-button-select">
+                                    				<apex:commandButton style="background-color: #ffbb33; border: none; border-radius: 7px; color: white; padding: 0px 20px; font-size: 18px; cursor: pointer"
+                                                        				action="{!getSelectedJobAdvertisement}" reRender="smallPanelId, selectedOptionsId" value="Select" id="btn">
+      													<apex:param name="jaId" value="{!jobAdv.Id}" assignTo="{!jobAdvId}"/> 
+													</apex:commandButton>
+        										</div> 
+    										</div>
+                            			</div>
+                        			</apex:repeat>
+                        		</apex:outputPanel>
+    						</div>
+                    
+                    	<div class="column2">
+                        	<apex:outputPanel id="selectedOptionsId">
+                        		<div class="div-selected-options">
+                            		<b>&ensp;Selected&ensp;&nbsp;Jobs&emsp;&nbsp;</b>
+                            		<apex:outputLabel style="" value="{!vacancysCounterString}" styleClass="label-counter"/>
+        							<apex:commandButton style="background-color: #ffbb33; border: none; border-radius: 7px; color: white; padding: 0px 0px; font-size: 16px; cursor: pointer; width: 30%;"
+                                                    	value="Apply" action="{!showPopup}" reRender="popup" /> 
+                        		</div>
+                        	</apex:outputPanel>
+                        	<apex:outputPanel id="smallPanelId">
+                        		<apex:repeat value="{!selectedJobAdvertisementsMap}" var="jobAdv">
+                        			<div class="div-smallpanel-label">
+    									<apex:outputText style="font-weight:800" value="{!selectedJobAdvertisementsMap[jobAdv].Name}"/>
+                                		<span style="float: right">
+                                			<div>     
+                                    			<apex:commandButton style="border: none; background: transparent; margin-top: -10px; margin-right: -10px; cursor: pointer"
+                                                        			value="✕" action="{!deleteSelectedJobAdvertisement}" reRender="smallPanelId, selectedOptionsId" >
+                                        			<apex:param name="jaId" value="{!selectedJobAdvertisementsMap[jobAdv].Id}" assignTo="{!jobAdvId}"/>
+                                    			</apex:commandButton>
+                                			</div>
+                                		</span>
+                                		<br/>
+            							<apex:outputText value="{!selectedJobAdvertisementsMap[jobAdv].Salary__c}"/>
+    									<apex:outputText value="{!selectedJobAdvertisementsMap[jobAdv].Location__c}"/>
+    								</div>
+                        		</apex:repeat>
+                       	 	</apex:outputPanel>
+                        
+                        	<div class="div-pagination">
+            		  			<apex:outputPanel id="buttonsId">
+            						<apex:commandButton status="fetchStatus" reRender="buttonsId, filteredJobAdvs" value="<<" action="{!setController.first}" disabled="{!!setController.hasPrevious}" title="First Page"/> 
+            						<apex:commandButton status="fetchStatus" reRender="buttonsId, filteredJobAdvs" value="<" action="{!setController.previous}" disabled="{!!setController.hasPrevious}" title="Previous Page"/> 
+            						&nbsp;
+            						<apex:outputText >
+            							{!(setController.pageNumber * size)+1-size}-{!IF((setController.pageNumber * size)>noOfRecords, noOfRecords,(setController.pageNumber * size))} of {!noOfRecords}
+            						</apex:outputText> 
+            						&nbsp;
+            						<apex:commandButton status="fetchStatus" reRender="buttonsId, filteredJobAdvs" value=">" action="{!setController.next}" disabled="{!!setController.hasNext}" title="Next Page"/> 
+            						<apex:commandButton status="fetchStatus" reRender="buttonsId, filteredJobAdvs" value=">>" action="{!setController.last}" disabled="{!!setController.hasNext}" title="Last Page"/>
+            						<apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize()">
+                    					<apex:selectOptions value="{!paginationSizeOptions}"/>
+                					</apex:selectList>
+                					<apex:actionStatus id="fetchStatus" >
+                    					<apex:facet name="start">
+                        					<img src="/img/loading.gif" style="margin-left: 5px" />                    
+                    					</apex:facet>
+                					</apex:actionStatus>
+                				</apex:outputPanel>
+            				</div>
+                    	</div>
+                    
+              			<apex:outputPanel id="popup">
+                			<apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+                			<apex:outputPanel id="outputPan" styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+                        		<div class="popup-container">
+                        			<span style="float: right">
+                            			<apex:commandButton style="border: none; background: transparent; cursor: pointer;"
+                                                			value="✕" action="{!closePopup}" reRender="popup">
+                                		</apex:commandButton><br/>
+                        			</span>
+                        			<div>
+                            			<apex:inputText value="{!popupFullName}" html-placeholder="Full name" style="margin-left: 8px; width: 250px" /><br/><br/>
+                        				<apex:input type="number" html-min="0" html-max="150" value="{!popupAge}" html-placeholder="Age" style="border-radius: 5px; width: 250px; height: 33px; padding-left: 10px" /><br/><br/>
+                        				<apex:input type="number" html-min="0" html-max="9999999999999999" value="{!popupSalary}" html-placeholder="Salary" style="border-radius: 5px; width: 250px; height: 33px; padding-left: 10px" /><br/><br/>
+                        				<script>
+    										function decimalOnly(e){
+      											e.value = e.value.replace(/[^0-9\.]/g,'');
+      											if(e.value.split('.').length>2) e.value = e.value.replace(/\.+$/,"");
+    										};        
+										</script>
+                                		<apex:inputText onkeyup="decimalOnly(this)" value="{!popupPhone}" html-placeholder="Phone (only numbers)" style="width: 250px" /><br/><br/>
+                                		<apex:selectList value="{!popupStatus}" multiselect="false" size="1" style="width: 250px; padding-left: 10px">
+                    						<apex:selectOptions value="{!candidateStatusOptions}"/>
+                						</apex:selectList><br/><br/>  
+                        				<apex:inputTextarea value="{!popupAdditionalInfo}" html-placeholder="Additional Info" style="resize:none; margin-left: 8px; width: 250px" /><br/>
+                                		<span style="float: right">
+                                    		<img src="https://llsr.ru/i/product/no_product.png" id="upload-img" alt="image" height="150px" width="150px" />
+                                		</span>
+                                		<form method="post" action="#?w=550"  enctype="multipart/form-data">
+    										<input type="file" id="upload" />
+    										<script>
+        										function readURL(e) {
+            										if (this.files && this.files[0]) {
+                										var reader = new FileReader();
+                										$(reader).load(function(e) { 
+                    										$('#upload-img').attr('src', e.target.result); 
+                										});
+                										reader.readAsDataURL(this.files[0]);
+            										}
+        										}
+        										$("#upload").change(readURL);
+    										</script>
+                                    		<br/><br/>
+      										<input type='submit' value='Download' />
+    									</form>
+                                		<apex:commandButton value="Send CV"/>
+                        			</div>
+                        		</div>
+                   			</apex:outputPanel> 
+               			</apex:outputPanel>    
+        			</div>
+    			</div>
+			</body>
+        </apex:pageBlock>
+    </apex:form>
+	</html>
+</apex:page>

@@ -67,6 +67,10 @@
                 <behavior>Readonly</behavior>
                 <field>MAX_Salary__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Published_Date__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

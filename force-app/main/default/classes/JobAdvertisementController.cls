@@ -1,6 +1,6 @@
 public class JobAdvertisementController{
-    Public Integer size{get;set;} 
-    Public Integer noOfRecords{get; set;}
+    public Integer size{get;set;} 
+    public Integer noOfRecords{get; set;}
     public Integer equalSalary{get;set;}
     public Integer notEqualSalary{get;set;}
     public Integer lessThanSalary{get;set;}
@@ -13,13 +13,11 @@ public class JobAdvertisementController{
     
     public List<String> soughtStatusList{get;set;}
     public List<SelectOption> paginationSizeOptions{get;set;}
-    public List<Job_Advertisement__c> jobAdvertisementsList{get;set;}
     
     public Job_Advertisement__c jobAdvertisement{get;set;}
         
     public JobAdvertisementController(){
         jobAdvertisement = new Job_Advertisement__c();
-        jobAdvertisementsList = getJobAdvertisementListBasic();
         createPaginationOptions();
     }
     
@@ -44,12 +42,7 @@ public class JobAdvertisementController{
             soughtStatusList.add(status);
         }
 		soughtStatus = String.join(soughtStatusList,',');
-    }
-  
-    public List<Job_Advertisement__c> getJobAdvertisementListBasic(){
-        jobAdvertisementsList = [SELECT Id, Name, Location__c, Description__c, Salary__c, Skills_Required__c, Education__c, Manager_Name__c, Status__c
-                         		 FROM Job_Advertisement__c];
-        return jobAdvertisementsList;
+        System.debug(soughtStatus);
     }
     
     public List<Job_Advertisement__c> getJobAdvertisementsByParameters(){
