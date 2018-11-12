@@ -1,11 +1,10 @@
 # SFDX  App
 ## Job Advertisements endpoint, VF pages, controllers and tests
----
----
+#Instruction
 1. Open a new Terminal window and use the following command to create a unique directory to do your work in:
 ---
-```mkdir http_services_project
-cd http_services_project```
+mkdir http_services_project
+cd http_services_project
 ---
 ---
 2. Use this command to clone the app repository:
