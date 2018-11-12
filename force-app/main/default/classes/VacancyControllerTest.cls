@@ -78,13 +78,25 @@ private class VacancyControllerTest {
     //BAD SCENARIOS
     
     @isTest
+    static void testQueryException() {
+        VacancyController controllerClass = new VacancyController();
+        
+        Job_Advertisement__c jobAdvertisement = createTestRecord();
+        List<Job_Advertisement__c> jobAdvertisementList = new List<Job_Advertisement__c>{jobAdvertisement};
+        
+        controllerClass.jobAdvId = jobAdvertisement.Id; 
+        Job_Advertisement__c selectedJobAdvertisement = controllerClass.getJobAdvertisement();     
+        System.assertEquals(selectedJobAdvertisement, null);
+    }
+    
+    @isTest
     static void testWrongName() {
         VacancyController controllerClass = new VacancyController();
         
         Job_Advertisement__c jobAdvertisement = createTestRecord();
         List<Job_Advertisement__c> jobAdvertisementList = new List<Job_Advertisement__c>{jobAdvertisement};
         insert jobAdvertisementList;
-        Test.setCreatedDate(jobAdvertisement.Id, Datetime.now());  //Test Published_Date__c
+        Test.setCreatedDate(jobAdvertisement.Id, Datetime.now());
         jobAdvertisement = [SELECT CreatedDate, Published_Date__c FROM Job_Advertisement__c];
 		setController(jobAdvertisement);
         
@@ -108,7 +120,7 @@ private class VacancyControllerTest {
         Job_Advertisement__c jobAdvertisement = createTestRecord();
         List<Job_Advertisement__c> jobAdvertisementList = new List<Job_Advertisement__c>{jobAdvertisement};
         insert jobAdvertisementList;
-        Test.setCreatedDate(jobAdvertisement.Id, Datetime.now());  //Test Published_Date__c
+        Test.setCreatedDate(jobAdvertisement.Id, Datetime.now());
         jobAdvertisement = [SELECT CreatedDate, Published_Date__c FROM Job_Advertisement__c];
 		setController(jobAdvertisement);
         
@@ -132,7 +144,7 @@ private class VacancyControllerTest {
         Job_Advertisement__c jobAdvertisement = createTestRecord();
         List<Job_Advertisement__c> jobAdvertisementList = new List<Job_Advertisement__c>{jobAdvertisement};
         insert jobAdvertisementList;
-        Test.setCreatedDate(jobAdvertisement.Id, Datetime.now());  //Test Published_Date__c
+        Test.setCreatedDate(jobAdvertisement.Id, Datetime.now());
         jobAdvertisement = [SELECT CreatedDate, Published_Date__c FROM Job_Advertisement__c];
 		setController(jobAdvertisement);
         

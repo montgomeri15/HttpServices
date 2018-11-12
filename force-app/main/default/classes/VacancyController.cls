@@ -9,6 +9,7 @@ public class VacancyController {
     public String soughtSalary{get;set;}
     public String soughtPublishedDate{get;set;}
     public String popupFullName{get;set;}
+    public String popupEmail{get;set;}
     public String popupPhone{get;set;}
     public String popupStatus{get;set;}
     public String popupAdditionalInfo{get;set;}
@@ -65,8 +66,7 @@ public class VacancyController {
         return Database.query('SELECT Id, Name, Location__c, Description__c, Salary__c, Skills_Required__c, Education__c, Manager_Name__c, Status__c FROM Job_Advertisement__c'+
                              (filters.isEmpty()?'':' WHERE ' + String.join(filters,' AND ')));
     }
-    
-    
+     
     public ApexPages.StandardSetController setController {
         get {
             if(setController == null) {                
@@ -90,10 +90,15 @@ public class VacancyController {
     }
     
     public Job_Advertisement__c getJobAdvertisement() {
-        Job_Advertisement__c neededJobAdvertisement = [SELECT Id, Name, Salary__c, Location__c
-                                         			   FROM Job_Advertisement__c
-                                         			   WHERE Id =: jobAdvId
-                                                       LIMIT 1];
+        Job_Advertisement__c neededJobAdvertisement;
+        try{
+            neededJobAdvertisement = [SELECT Id, Name, Salary__c, Location__c
+                                      FROM Job_Advertisement__c
+                                      WHERE Id =: jobAdvId
+                                      LIMIT 1];
+        } catch(QueryException e){
+            Apexpages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
+        }
         return neededJobAdvertisement;
     }
     

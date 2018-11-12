@@ -132,9 +132,9 @@
         		padding:10px;
         		position:fixed;
         		width: 500px;
-        		height: 500px;
+        		height: 550px;
         		margin-left: -200px;
-        		top:200px;
+        		top:180px;
     		}
     		.popupBackground{
         		background-color:black;
@@ -180,11 +180,11 @@
             				<div class="column1"> 
                         		<div class="div-filters">
                             		<apex:inputText value="{!soughtName}" style="border-radius: 5px 0px 0px 5px; margin-right: -8px; height: 42px; width: 30%" html-placeholder="Name of the Vacancy"  />
-                            		<apex:input type="date" value="{!soughtPublishedDate}" style="border-radius: 0px; margin-right: -8px; height: 43px; width: 30%" html-placeholder="Published Date"  />
+                            		<apex:input type="date" value="{!soughtPublishedDate}" style="border-radius: 0px; margin-right: -8px; height: 42px; width: 30%" html-placeholder="Published Date"  />
                             		<apex:selectList value="{!soughtSalary}" style="border-radius: 0px; margin-top: -50px; height: 42px; width: 20%" html-placeholder="Salary range" size="1">
                                 		<apex:selectOptions value="{!salaryRangeOptions}"/>
                             		</apex:selectList>
-                            		<apex:commandButton style="background-color: #ffbb33; border-radius: 0px 5px 5px 0px; margin-left: -1px; color: white; padding: 5px 25px; font-size: 16px; cursor: pointer; height: 44px; width: 18%"
+                            		<apex:commandButton style="background-color: #ffbb33; border-radius: 0px 5px 5px 0px; margin-left: -1px; color: white; padding: 5px 25px; font-size: 16px; cursor: pointer; height: 43px; width: 18%"
                                                 		action="{!searchByParameters}" id="searchButtonId" value="SEARCH"/>
                         		</div>
                         
@@ -281,18 +281,27 @@
                         			</span>
                         			<div>
                             			<apex:inputText value="{!popupFullName}" html-placeholder="Full name" style="margin-left: 8px; width: 250px" /><br/><br/>
-                        				<apex:input type="number" html-min="0" html-max="150" value="{!popupAge}" html-placeholder="Age" style="border-radius: 5px; width: 250px; height: 33px; padding-left: 10px" /><br/><br/>
-                        				<apex:input type="number" html-min="0" html-max="9999999999999999" value="{!popupSalary}" html-placeholder="Salary" style="border-radius: 5px; width: 250px; height: 33px; padding-left: 10px" /><br/><br/>
+                        				<apex:input type="number" html-min="0" html-max="150" value="{!popupAge}" html-placeholder="Age" style="border-radius: 5px; width: 250px; height: 33px; padding-left: 10px" />
+                                        <apex:outputText value=" - Age" style="color: #C0C0C0; font-style: italic"/><br/><br/>
+                        				<apex:input type="number" html-min="0" html-max="9999999999999999" value="{!popupSalary}" html-placeholder="Salary" style="border-radius: 5px; width: 250px; height: 33px; padding-left: 10px" />
+                                        <apex:outputText value=" - Salary" style="color: #C0C0C0; font-style: italic"/><br/><br/>
                         				<script>
-    										function decimalOnly(e){
-      											e.value = e.value.replace(/[^0-9\.]/g,'');
-      											if(e.value.split('.').length>2) e.value = e.value.replace(/\.+$/,"");
-    										};        
+                                        	function is_email(email){      
+												var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+												return emailReg.test(email);
+                                            } 
+                                        </script>
+                                        <apex:inputText onkeyup="is_email(this)" value="{!popupEmail}" html-placeholder="Email" style="width: 250px" /><br/><br/>
+                                        <script>
+    										function is_phone(phone){
+      											phone.value = phone.value.replace(/[^0-9]/g,'');
+    										}   
 										</script>
-                                		<apex:inputText onkeyup="decimalOnly(this)" value="{!popupPhone}" html-placeholder="Phone (only numbers)" style="width: 250px" /><br/><br/>
-                                		<apex:selectList value="{!popupStatus}" multiselect="false" size="1" style="width: 250px; padding-left: 10px">
+                                		<apex:inputText onkeyup="is_phone(this)" value="{!popupPhone}" html-placeholder="Phone" style="width: 250px" /><br/><br/>
+                                        <apex:selectList value="{!popupStatus}" multiselect="false" size="1" style="width: 250px; padding-left: 10px">
                     						<apex:selectOptions value="{!candidateStatusOptions}"/>
-                						</apex:selectList><br/><br/>  
+                						</apex:selectList>
+                                        <apex:outputText value=" - Status" style="color: #C0C0C0; font-style: italic"/><br/><br/>
                         				<apex:inputTextarea value="{!popupAdditionalInfo}" html-placeholder="Additional Info" style="resize:none; margin-left: 8px; width: 250px" /><br/>
                                 		<span style="float: right">
                                     		<img src="https://llsr.ru/i/product/no_product.png" id="upload-img" alt="image" height="150px" width="150px" />
