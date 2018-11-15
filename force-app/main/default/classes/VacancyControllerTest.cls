@@ -69,7 +69,6 @@ private class VacancyControllerTest {
         controllerClass.popupPhone = '380554646465';
     	controllerClass.popupStatus = 'Employed';
     	controllerClass.popupAdditionalInfo = 'Additional Info';
-    	controllerClass.popupPhoto = Blob.valueOf('Unit Test Attachment Body');
 
         controllerClass.showPopup();
         controllerClass.closePopup();
