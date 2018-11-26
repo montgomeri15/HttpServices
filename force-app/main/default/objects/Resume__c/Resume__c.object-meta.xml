@@ -58,7 +58,12 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Resumes</pluralLabel>
-    <searchLayouts/>
+    <searchLayouts>
+        <customTabListAdditionalFields>Email__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Email__c</lookupDialogsAdditionalFields>
+        <searchFilterFields>Email__c</searchFilterFields>
+        <searchResultsAdditionalFields>Email__c</searchResultsAdditionalFields>
+    </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>
