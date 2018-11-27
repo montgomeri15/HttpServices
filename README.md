@@ -37,7 +37,12 @@ sfdx force:source:push
 sfdx force:user:permset:assign -n JobAdvertisementPermSet
 ```
 
-8. Import data (200 test records of Job Advertisement):
+8. Open the scratch org:
+```
+sfdx force:org:open
+```
+
+9. Import data (200 test records of Job Advertisement):
 ```
 sfdx force:data:tree:import -f data/Job_Advertisement__c.json -u myscratchorg
 ```
@@ -45,6 +50,7 @@ sfdx force:data:tree:import -f data/Job_Advertisement__c.json -u myscratchorg
 ### Needed classes:
 * VacancyController
 * VacancyControllerTest
+* EndpointResume
 
 ### Needed VF Page:
 * VacancyVF
