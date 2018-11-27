@@ -3,7 +3,7 @@ public class VacancyController {
     public Integer noOfRecords{get; set;}    
     public Integer popupAge{get;set;}
     public Integer popupSalary{get;set;}
-    private static final Integer IMAGE_MAX_SIZE = 100000;
+    private static final Integer IMAGE_MAX_SIZE = 25000;
     
     public String vacancysCounterString{get;set;}
     public String soughtName{get;set;}
