@@ -167,6 +167,7 @@ public class VacancyController {
             Additional_Info__c = popupAdditionalInfo);    
         try{
             upsert resume Email__c;
+            //Apexpages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.CONFIRM, System.Label.Successfully_created_a_resume));
         } catch(Exception e){
             Apexpages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
         }
@@ -242,11 +243,26 @@ public class VacancyController {
         delete contentDocumentList;
     }
     
+    public static Boolean checkEmail(String email) {
+		if (String.isEmpty(email)) return true;
+		Boolean isValid = true;
+		String emailRegex = '^[a-zA-Z0-9._|\\\\%#~`=?&/$^*!}{+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$'; 
+		Pattern MyPattern = Pattern.compile(emailRegex);
+		Matcher MyMatcher = MyPattern.matcher(email);
+		if (!MyMatcher.matches()) 
+		    isValid = false;
+		return isValid;	
+	}
+    
     public void clickDownloadButton(){
-        createResumeRecord();
-        createResumeJunctionRecord();
-        uploadFile();
-        sendEmailNotification();
+        if(checkEmail(popupEmail)){
+            createResumeRecord();
+        	createResumeJunctionRecord();
+        	uploadFile();
+        	sendEmailNotification();
+        } else{
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, System.Label.Wrong_email));
+        }
     }
     
     public void sendEmailNotification(){
@@ -259,8 +275,11 @@ public class VacancyController {
         } else{
             message.plainTextBody = 'Congratulations! Your resume has been successfully created or modified.';
         }
-		
 		Messaging.SingleEmailMessage[] messages =   new List<Messaging.SingleEmailMessage> { message };
-		Messaging.sendEmail(messages);
+            try{
+                Messaging.sendEmail(messages);
+            } catch(Exception e){
+                Apexpages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.CONFIRM, e.getMessage()));
+            }
     }
 }

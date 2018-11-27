@@ -256,18 +256,21 @@
                 			<apex:outputPanel id="outputPan" styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
                         		<div class="popup-container">
                         			<span style="float: right">
-                            			<apex:commandButton style="border: none; background: transparent; cursor: pointer;"
-                                                			value="✕" action="{!closePopup}">
-                                		</apex:commandButton><br/>
+                            			<apex:commandButton action="{!closePopup}" style="border: none; background: transparent; cursor: pointer;"
+                                                            value="✕" immediate="true" html-formnovalidate="formnovalidate" /><br/>
                         			</span>
                         			<div>
-                            			<apex:inputText value="{!popupFullName}" html-placeholder="Full name" style="margin-left: 8px; width: 350px" /><br/><br/>
-                        				<apex:input type="number" html-min="0" html-max="150" value="{!popupAge}" html-placeholder="Age" style="border-radius: 5px; width: 350px; height: 33px; padding-left: 10px" />
-                                        <apex:outputText value=" - Age" style="color: #C0C0C0; font-style: italic"/><br/><br/>
-                        				<apex:input type="number" html-min="0" html-max="9999999999999999" value="{!popupSalary}" html-placeholder="Salary" style="border-radius: 5px; width: 350px; height: 33px; padding-left: 10px" />
-                                        <apex:outputText value=" - Salary" style="color: #C0C0C0; font-style: italic"/><br/><br/>
-                                        <apex:inputText value="{!popupEmail}" required="true" html-placeholder="Email" style="width: 350px" /><br/><br/>
-                                		<apex:inputText onkeyup="is_phone(this)" value="{!popupPhone}" html-placeholder="Phone" style="width: 350px" /><br/><br/>
+                                        <apex:inputText value="{!popupFullName}" required="true" html-placeholder="Full name" style="margin-left: 8px; width: 350px" />
+                                        <apex:outputText value=" * " style="color: red"/><br/><br/>
+                                        <apex:input value="{!popupAge}" required="true" type="number" html-max="65" html-placeholder="Age" style="border-radius: 5px; width: 350px; height: 33px; padding-left: 10px" />
+                                        <apex:outputText value=" * " style="color: red"/><apex:outputText value=" - Age" style="color: #C0C0C0; font-style: italic"/><br/><br/>
+                                        <apex:input value="{!popupSalary}" required="true" type="number" html-min="0" html-max="1000000" html-placeholder="Salary" style="border-radius: 5px; width: 350px; height: 33px; padding-left: 10px" />
+                                        <apex:outputText value=" * " style="color: red"/><apex:outputText value=" - Salary" style="color: #C0C0C0; font-style: italic"/><br/><br/>
+                                        <apex:inputText value="{!popupEmail}" required="true" html-placeholder="Email" style="width: 350px" />
+                                        
+                                        
+                                        <apex:outputText value=" * " style="color: red"/><br/><br/>
+                                        <apex:inputText value="{!popupPhone}" onkeyup="is_phone(this)" html-placeholder="Phone" style="width: 350px" /><br/><br/>
                                         <apex:selectList value="{!popupStatus}" multiselect="false" size="1" style="width: 350px; padding-left: 10px">
                     						<apex:selectOptions value="{!candidateStatusOptions}"/>
                 						</apex:selectList>
@@ -276,14 +279,17 @@
             							<apex:pageBlockSection columns="2">
                 							<apex:pageBlockSectionItem >
                     							<apex:outputPanel >
-                        							<apex:inputFile style="width: 200px" value="{!versionData}" contentType="{!contentType}" title="{!title}" fileName="{!pathOnClient}" accept="image/*" /><br/>
-            										<apex:commandButton style="margin: 10px 0px;" html-data-element-id="upload-image-btn" value="Upload" action="{!clickDownloadButton}" />
+                        							<apex:inputFile onchange="loadFile(event)" style="width: 200px" value="{!versionData}" contentType="{!contentType}" title="{!title}" fileName="{!pathOnClient}" accept="image/*" /><br/>
+                                                    <apex:commandButton onclick="myFunction()" style="margin: 10px 0px;" html-data-element-id="upload-image-btn" value="Upload" action="{!clickDownloadButton}" />
                     							</apex:outputPanel>
                 							</apex:pageBlockSectionItem>
                 							<apex:pageBlockSectionItem >
-            									<apex:outputText value="Current image:   " />
-            									<apex:image style="margin: 10px;" url="{!$Site.BaseUrl}/sfc/servlet.shepherd/version/download/{!contentVersionId}" height="130px"/>
-                							</apex:pageBlockSectionItem>
+                                                <apex:outputText value="Current image:   " />
+                                                <apex:outputPanel>
+            										<!--<img id="output" style="margin: 10px;" url="{!$Site.BaseUrl}/sfc/servlet.shepherd/version/download/{!contentVersionId}" height="130px"/>-->
+                                                    <apex:image rendered="{!contentVersionId != null}" style="margin: 10px;" url="{!$Site.BaseUrl}/sfc/servlet.shepherd/version/download/{!contentVersionId}" height="130px"/>
+                                                </apex:outputPanel>
+                                            </apex:pageBlockSectionItem>
             							</apex:pageBlockSection>  
                         			</div>
                         		</div>
@@ -308,8 +314,14 @@
     			}
 			}	
 		}
+    
     	function is_phone(phone){
             phone.value = phone.value.replace(/[^0-9]/g,'');
         }
+    
+    	var loadFile = function(event) {
+    		var output = document.getElementById('output');
+    		output.src = URL.createObjectURL(event.target.files[0]);
+  		};
 	</script> 
 </apex:page>

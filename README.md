@@ -50,7 +50,6 @@ sfdx force:data:tree:import -f data/Job_Advertisement__c.json -u myscratchorg
 ### Needed classes:
 * VacancyController
 * VacancyControllerTest
-* EndpointResume
 
 ### Needed VF Page:
 * VacancyVF
