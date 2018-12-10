@@ -217,7 +217,7 @@ private class VacancyControllerTest {
         	controllerClass.createResumeRecord();
         Test.stopTest();
         
-        System.assertNotEquals(ApexPages.getMessages(), null);
+        System.assertEquals(true, ApexPages.hasMessages());
     }
         
     @isTest
@@ -249,7 +249,7 @@ private class VacancyControllerTest {
         
         System.assertEquals(controllerClass.resumeJunctionField.Id, controllerClass.resume.Id);
         System.assertEquals(controllerClass.resumeJunctionField.Position_ID__c, 'text 999999');
-        System.assertNotEquals(ApexPages.getMessages(), null);
+        System.assertEquals(true, ApexPages.hasMessages());
     }
     
     @isTest
@@ -275,7 +275,7 @@ private class VacancyControllerTest {
         Test.stopTest();
         
         System.assertEquals(controllerClass.versionData, null);
-        System.assertNotEquals(ApexPages.getMessages(), null);
+        System.assertEquals(true, ApexPages.hasMessages());
     }
     
     @isTest
@@ -306,7 +306,7 @@ private class VacancyControllerTest {
         	controllerClass.clickDownloadButton();
         Test.stopTest();
         
-        System.assertNotEquals(ApexPages.getMessages(), null);
+        System.assertEquals(true, ApexPages.hasMessages());
     }
     
     @isTest
@@ -336,6 +336,6 @@ private class VacancyControllerTest {
         	controllerClass.clickDownloadButton();
         Test.stopTest();
         
-        System.assertNotEquals(ApexPages.getMessages(), null);
+        System.assertEquals(true, ApexPages.hasMessages());
     }
 }

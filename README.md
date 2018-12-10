@@ -34,7 +34,7 @@ sfdx force:source:push
 
 7. Assign the permission set to the default user:
 ```
-sfdx force:user:permset:assign -n JobAdvertisementPermSet
+sfdx force:user:permset:assign -n HttpServPermissions
 ```
 
 8. Open the scratch org:
@@ -42,14 +42,26 @@ sfdx force:user:permset:assign -n JobAdvertisementPermSet
 sfdx force:org:open
 ```
 
-9. Import data (200 test records of Job Advertisement):
+9. Import data (200 test records of Job Advertisement, 1000 - of Resume):
 ```
-sfdx force:data:tree:import -f data/Job_Advertisement__c.json -u myscratchorg
+sfdx force:data:tree:import -f data/200_Job_Advertisement__c.json -u myscratchorg
+sfdx force:data:tree:import -f data/1000_Resume__c.json -u myscratchorg
 ```
 
 ### Needed classes:
-* VacancyController
+* VacancyController - 93%
+* VacancyControllerEmail - 82%
+* JobAdvertisementArchivedTrigger - 100%
+* JobAdvertisementArchivedTriggerHelper - 100%
+* EndpointResume - 83%
+* JobAdvertisementEndpoint - 91%
+
+
+### Test classes:
 * VacancyControllerTest
+* JobAdvertisementEndpointTest
+* EndpointResumeTest
+
 
 ### Needed VF Page:
 * VacancyVF
