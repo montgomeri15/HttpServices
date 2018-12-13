@@ -195,19 +195,16 @@ public class VacancyController {
     }
     
     /*----------------  Image  --------------------------*/    
-    public PageReference uploadFile() {
+    public void uploadFile() {
         if(versionData == null){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, System.Label.File_is_null));
-            return null;
         }
-        if(versionData.size() > IMAGE_MAX_SIZE){
+        else if(versionData.size() > IMAGE_MAX_SIZE){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, System.Label.File_is_too_big));
             versionData = null;
-            return null;
         }
-        if(contentType != 'image/jpeg' && contentType != 'image/jpg' && contentType != 'image/png'){
+        else if(contentType != 'image/jpeg' && contentType != 'image/jpg' && contentType != 'image/png'){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, System.Label.File_invalid_format));
-            return null;
         }
         deletePreviousFiles();
         currentContentVersion = new ContentVersion(
@@ -216,17 +213,23 @@ public class VacancyController {
             VersionData = versionData,
             FirstPublishLocationId = resume.Id
         );
+        
         try {
             insert currentContentVersion;
-            contentVersionId = currentContentVersion.Id;
-            resume.Photo_Code__c = EncodingUtil.base64Encode(currentContentVersion.VersionData);
-            resume.Photo_Title__c = title;
-            resume.Photo_PathOnClient__c = pathOnClient;
+        } catch(Exception e) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
+        }
+        
+        contentVersionId = currentContentVersion.Id;
+        resume.Photo_Code__c = EncodingUtil.base64Encode(currentContentVersion.VersionData);
+        resume.Photo_Title__c = title;
+        resume.Photo_PathOnClient__c = pathOnClient;
+        
+        try {
         	update resume;
         } catch(Exception e) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
         }
-        return null;
     }
     
     public List<ContentVersion> getContentVersionList(){

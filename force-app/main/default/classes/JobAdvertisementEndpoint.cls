@@ -18,7 +18,6 @@ global with sharing class JobAdvertisementEndpoint {
                 res.responseBody = Blob.valueOf(JSON.serialize(jobAdvList));
                 res.statusCode = 200;
             } catch(Exception e) {
-            	res.responseBody = Blob.valueOf(e.getMessage());
             	res.statusCode = 500;
             }
         } else{
@@ -29,7 +28,6 @@ global with sharing class JobAdvertisementEndpoint {
                 res.responseBody = Blob.valueOf(JSON.serialize(jobAdvList));
                 res.statusCode = 200;
             } catch(Exception e) {
-            	res.responseBody = Blob.valueOf(e.getMessage());
             	res.statusCode = 500;
             }
         }

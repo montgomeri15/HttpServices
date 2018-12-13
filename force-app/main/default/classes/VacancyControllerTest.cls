@@ -73,11 +73,12 @@ private class VacancyControllerTest {
                 
         ContentVersion contentVersion = getContentVersion(controllerClass.resumeJunctionField.Id);
         insert contentVersion;
+        controllerClass.contentVersionId = contentVersion.Id;
         controllerClass.versionData = contentVersion.VersionData;
         controllerClass.contentType = 'image/jpeg';
         controllerClass.currentContentVersion = contentVersion;
         controllerClass.contentVersionId = contentVersion.Id;
-                
+                                
         Test.startTest();
         	controllerClass.clickDownloadButton();
         Test.stopTest();
@@ -123,14 +124,14 @@ private class VacancyControllerTest {
     //BAD SCENARIOS
     
     @isTest
-    static void testQueryException() {
+    static void testGetJobAdvertisementQueryException() {
         VacancyController controllerClass = new VacancyController();
         
         Job_Advertisement__c jobAdvertisement = createTestJobAdvertisement();
         List<Job_Advertisement__c> jobAdvertisementList = new List<Job_Advertisement__c>{jobAdvertisement};
-        
         controllerClass.jobAdvId = jobAdvertisement.Id; 
-        Job_Advertisement__c selectedJobAdvertisement = controllerClass.getJobAdvertisement();     
+        Job_Advertisement__c selectedJobAdvertisement = controllerClass.getJobAdvertisement(); 
+        
         System.assertEquals(selectedJobAdvertisement, null);
     }
     
@@ -269,7 +270,7 @@ private class VacancyControllerTest {
                 
         controllerClass.resumeJunctionField = createTestResume();
         controllerClass.popupEmail = controllerClass.resumeJunctionField.Email__c;
-        
+
         Test.startTest();
         	controllerClass.clickDownloadButton();
         Test.stopTest();
