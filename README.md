@@ -49,12 +49,12 @@ sfdx force:data:tree:import -f data/1000_Resume__c.json -u myscratchorg
 ```
 
 ### Needed classes:
-* VacancyController - 93%
+* VacancyController - 95%
 * VacancyControllerEmail - 82%
 * JobAdvertisementArchivedTrigger - 100%
 * JobAdvertisementArchivedTriggerHelper - 100%
 * EndpointResume - 83%
-* JobAdvertisementEndpoint - 91%
+* JobAdvertisementEndpoint - 94%
 
 
 ### Test classes:
