@@ -206,29 +206,31 @@ public class VacancyController {
         else if(contentType != 'image/jpeg' && contentType != 'image/jpg' && contentType != 'image/png'){
             ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, System.Label.File_invalid_format));
         }
-        deletePreviousFiles();
-        currentContentVersion = new ContentVersion(
-            Title = title,
-            PathOnClient = pathOnClient,
-            VersionData = versionData,
-            FirstPublishLocationId = resume.Id
-        );
+        else{
+        	deletePreviousFiles();
+        	currentContentVersion = new ContentVersion(
+            	Title = title,
+            	PathOnClient = pathOnClient,
+            	VersionData = versionData,
+            	FirstPublishLocationId = resume.Id
+        	);
         
-        try {
-            insert currentContentVersion;
-        } catch(Exception e) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
-        }
+        	try {
+            	insert currentContentVersion;
+        	} catch(Exception e) {
+            	ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
+        	}
         
-        contentVersionId = currentContentVersion.Id;
-        resume.Photo_Code__c = EncodingUtil.base64Encode(currentContentVersion.VersionData);
-        resume.Photo_Title__c = title;
-        resume.Photo_PathOnClient__c = pathOnClient;
+        	contentVersionId = currentContentVersion.Id;
+        	resume.Photo_Code__c = EncodingUtil.base64Encode(currentContentVersion.VersionData);
+        	resume.Photo_Title__c = title;
+        	resume.Photo_PathOnClient__c = pathOnClient;
         
-        try {
-        	update resume;
-        } catch(Exception e) {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
+        	try {
+        		update resume;
+        	} catch(Exception e) {
+            	ApexPages.addMessage(new ApexPages.Message(ApexPages.SEVERITY.ERROR, e.getMessage()));
+        	}
         }
     }
     
