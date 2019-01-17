@@ -1,0 +1,80 @@
+<aura:component controller="VacancyLightningSearchApex">
+    
+    <!-- 1st cmp -->
+    
+    <aura:attribute name="jobAdvertisements" type="Job_Advertisement__c[]"/>
+    <aura:handler name="init" action="{!c.doBigVacancyCards}" value="{!this}"/>
+    <aura:attribute name="whichShowButton" type="String" />
+    <aura:attribute name="Boolean" type="Boolean" default="false" />
+    
+    <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]" />
+    
+    <div class="slds-grid slds-gutters divMain">
+        <div class="slds-col div1Column">
+    		<lightning:layout verticalAlign="end" class="layoutSearchMainColumn">
+        		<lightning:input aura:id="inputNameId" type="text" class="vacancyName" placeholder="Name of the Vacancy" />
+        		<lightning:input aura:id="inputDateId" type="date" class="publishedDate" placeholder="Published Date"/>   
+        			<lightning:select aura:id="selectSalaryId" class="salaryRange" variant="label-hidden" label="">
+        				<option value="Salary range">Salary range</option>
+        				<option value="50K-75K">50К-75К</option>
+        				<option value="75K-90K">75К-90К</option>
+        				<option value="90K-120K">90К-120К</option>
+            			<option value="120K+">120К+</option>
+    				</lightning:select>
+        		<lightning:button label="SEARCH" class="buttonSearch" onclick="{!c.searchVacancy}"/>
+    		</lightning:layout>
+    		<br/>
+            <br/>
+    		<aura:iteration items="{!v.jobAdvertisements}" var="jobAdvertisement" indexVar="index">     
+    			<lightning:layout multipleRows="true" class="layoutBigCardsColumn">
+        			<div aura:id="changeIt" class="slds-panel__body divResults">
+            			<p><b>{!jobAdvertisement.Name}</b></p>
+            			<p>
+                			{!jobAdvertisement.Salary__c}
+                			<span class="spanButtonToResults">
+                    			<lightning:buttonIcon name="{!jobAdvertisement.Id}" iconName="utility:chevrondown" variant="bare" alternativeText="View More" onclick="{!c.showDetails}"/>
+                			</span>
+            			</p>
+            			<p>{!jobAdvertisement.Location__c}</p>
+        			</div>
+           			<aura:if isTrue="{!v.whichShowButton == jobAdvertisement.Id}">
+               			<br/>
+                    	<div class="divDetails">
+                        	<p><b>Detailed INFO about {!jobAdvertisement.Name}</b></p>
+                        	<lightning:button aura:id="buttonIconId" label="Select" name="{!jobAdvertisement}" class="buttonSelect" onclick="{!c.selectVacancy}"/>
+                    	</div>
+  					</aura:if>
+    			</lightning:layout>
+    		</aura:iteration>
+        </div>
+    
+    <!-- 2nd cmp -->
+        
+    	<div class="slds-col div2Column">
+    		<lightning:layout horizontalAlign="center" multipleRows="true" class="layoutCardsColumn">
+                <span class="selectedJobsTop">
+                    <b>Selected&ensp;Jobs&emsp;&ensp;</b>
+                    <ui:outputText class="circleNumbers" value="00"/>
+                    <lightning:button label="Apply" class="buttonApply"/>
+                    <aura:if isTrue="{!v.selectedVacancies != null}">
+                        <aura:iteration items="{!v.selectedVacancies}" var="selectedVacancy" indexVar="index">
+                            <div class="slds-panel__body layoutLittleCards">
+                                <p>
+                                    <b>{!selectedVacancy.Name}</b>
+                                    <span class="spanButtonClose">
+                                        <lightning:buttonIcon name="{!index}" iconName="utility:close" variant="bare" size="small" alternativeText="Close" onclick="{!c.deselectTheCard}"/>
+                					</span>
+                                </p>
+                                <p>{!selectedVacancy.Salary__c}</p>
+                                <p>{!selectedVacancy.Location__c}</p>
+                            </div>
+    					</aura:iteration>
+                    </aura:if>
+                </span>
+    		</lightning:layout>
+    	</div>
+    </div>
+        
+    
+    
+</aura:component>

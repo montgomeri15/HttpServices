@@ -1,0 +1,14 @@
+<aura:component >
+    <lightning:layout horizontalAlign="center" verticalAlign="end" class="layoutSearch">
+        <lightning:input type="text" class="vacancyName" placeholder="Name of the Vacancy"/>
+        <lightning:input type="date" class="publishedDate" placeholder="Published Date"/>   
+        <lightning:select class="salaryRange" variant="label-hidden" label="">
+        	<option value="">Salary range</option>
+        	<option value="1">50К-75К</option>
+        	<option value="2">75К-90К</option>
+        	<option value="3">90К-120К</option>
+            <option value="4">120К+</option>
+    	</lightning:select>
+        <lightning:button label="SEARCH" class="buttonSearch"/>
+    </lightning:layout>
+</aura:component>
