@@ -4,21 +4,22 @@
     
     <aura:attribute name="jobAdvertisements" type="Job_Advertisement__c[]"/>
     <aura:handler name="init" action="{!c.doBigVacancyCards}" value="{!this}"/>
-    <aura:attribute name="Boolean" type="Boolean" default="false" />
-    <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]" />
+    <aura:attribute name="Boolean" type="Boolean" default="false"/>
+    <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]"/>
+    <aura:attribute name="popupIsOpen" type="boolean" default="false"/>
     
     <div class="slds-grid slds-gutters divMain">
         <div class="slds-col div1Column">
     		<lightning:layout verticalAlign="end" class="layoutSearchMainColumn">
         		<lightning:input aura:id="inputNameId" type="text" class="vacancyName" placeholder="Name of the Vacancy" />
         		<lightning:input aura:id="inputDateId" type="date" class="publishedDate" placeholder="Published Date"/>   
-        			<lightning:select aura:id="selectSalaryId" class="salaryRange" variant="label-hidden" label="">
-        				<option value="Salary range">Salary range</option>
-        				<option value="50K-75K">50К-75К</option>
-        				<option value="75K-90K">75К-90К</option>
-        				<option value="90K-120K">90К-120К</option>
-            			<option value="120K+">120К+</option>
-    				</lightning:select>
+        		<lightning:select aura:id="selectSalaryId" class="salaryRange" variant="label-hidden" label="">
+                    <option value="Salary range">Salary range</option>
+        			<option value="50K-75K">50К-75К</option>
+        			<option value="75K-90K">75К-90К</option>
+        			<option value="90K-120K">90К-120К</option>
+            		<option value="120K+">120К+</option>
+    			</lightning:select>
         		<lightning:button label="SEARCH" class="buttonSearch" onclick="{!c.searchVacancy}"/>
     		</lightning:layout>
     		<br/>
@@ -51,7 +52,7 @@
                 <span class="selectedJobsTop">
                     <b>Selected&ensp;Jobs&emsp;&ensp;</b>
                     <ui:outputText class="circleNumbers" value="00"/>
-                    <lightning:button label="Apply" class="buttonApply"/>
+                    <lightning:button label="Apply" class="buttonApply" onclick="{!c.popupMenu}"/>
                     <aura:if isTrue="{!v.selectedVacancies != null}">
                         <aura:iteration items="{!v.selectedVacancies}" var="selectedVacancy" indexVar="index">
                             <div class="slds-panel__body layoutLittleCards">
@@ -69,6 +70,49 @@
                 </span>
     		</lightning:layout>
     	</div>
+        
+        <aura:if isTrue="{!v.popupIsOpen}">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" onclick="{!c.closePopup}" alternativeText="Close" variant="bare-inverse" class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">My Resume</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="slds-grid">
+                        	<span class="slds-size_1-of-2 slds-m-around_x-small">
+								<lightning:input type="text" class="namePopup" placeholder="Full Name"/>
+        						<lightning:input type="integer" class="agePopup" placeholder="Age"/>
+                            	<lightning:input type="currency" class="salaryPopup" placeholder="Salary"/>
+        						<lightning:input type="email" class="emailPopup" placeholder="Email"/> 
+                            	<lightning:input type="phone" class="phonePopup" placeholder="Phone"/>
+                            	<lightning:select class="statusPopup" variant="label-hidden" label="">
+                    				<option value="Status">Status</option>
+        							<option value="Employed">Employed</option>
+        							<option value="Unemployed">Unemployed</option>
+    							</lightning:select>
+                            	<lightning:textarea placeholder="Additional Info"/>
+                        	</span>
+                            <span class="slds-size_1-of-2 slds-m-around_x-small">
+                            	<lightning:fileUpload  name="fileUploader"
+                           multiple="{!v.multiple}"
+                           accept="{!v.accept}"
+                           disabled="{!v.disabled}"
+                           recordId="abcd"
+                           onuploadfinished="{!c.handleUploadFinished}"/>
+                            </span>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" label="Send" title="Send" onclick="{!c.sendPopup}"/>
+                        <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{!c.closePopup}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" description="Dark background is here"></div>
+        </aura:if>
+        
+        
     </div>
         
     

@@ -57,8 +57,6 @@
         }
     },
     
-    // 2nd cmp
-    
     selectVacancy : function(component, event, helper) {
         let selectedVacancies = component.get("v.selectedVacancies");
     	selectedVacancies.push(event.getSource().get("v.name"));
@@ -69,6 +67,8 @@
         selectButton.set("v.class", "changeSelectButton");
     },
     
+    // 2nd cmp
+        
     deselectTheCard : function(component, event, helper) {
         let jobAdvertisements = component.get("v.jobAdvertisements");
         let selectedVacancies = component.get("v.selectedVacancies");
@@ -82,10 +82,27 @@
         for(let j=0; j<jobAdvertisements.length; j++){
         	for (let i=0; i<selectedVacancies.length; i++){
             	if((jobAdvertisements[j].Id) == (selectedVacancies[i].Id)){
-                    console.log(jobAdvertisements[j].Id); 
                 	console.log(selectedVacancies[i].Id); 
             	}			
 			}
         }
+    },
+    
+    popupMenu : function(component, event, helper) {
+        component.set("v.popupIsOpen", true);
+    },
+    
+    sendPopup : function(component, event, helper) {
+        component.set("v.popupIsOpen", false);
+    },
+    
+    closePopup : function(component, event, helper) {
+        component.set("v.popupIsOpen", false);
+    },
+    
+    handleUploadFinished: function (cmp, event) {
+        // This will contain the List of File uploaded data and status
+        var uploadedFiles = event.getParam("files");
+        alert("Files uploaded : " + uploadedFiles.length);
     },
 })
