@@ -4,9 +4,7 @@
     
     <aura:attribute name="jobAdvertisements" type="Job_Advertisement__c[]"/>
     <aura:handler name="init" action="{!c.doBigVacancyCards}" value="{!this}"/>
-    <aura:attribute name="whichShowButton" type="String" />
     <aura:attribute name="Boolean" type="Boolean" default="false" />
-    
     <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]" />
     
     <div class="slds-grid slds-gutters divMain">
@@ -27,7 +25,7 @@
             <br/>
     		<aura:iteration items="{!v.jobAdvertisements}" var="jobAdvertisement" indexVar="index">     
     			<lightning:layout multipleRows="true" class="layoutBigCardsColumn">
-        			<div aura:id="changeIt" class="slds-panel__body divResults">
+        			<div data-index="{!index}" aura:id="changeIt" class="slds-panel__body divResults">
             			<p><b>{!jobAdvertisement.Name}</b></p>
             			<p>
                 			{!jobAdvertisement.Salary__c}
@@ -37,13 +35,11 @@
             			</p>
             			<p>{!jobAdvertisement.Location__c}</p>
         			</div>
-           			<aura:if isTrue="{!v.whichShowButton == jobAdvertisement.Id}">
-               			<br/>
-                    	<div class="divDetails">
-                        	<p><b>Detailed INFO about {!jobAdvertisement.Name}</b></p>
-                        	<lightning:button aura:id="buttonIconId" label="Select" name="{!jobAdvertisement}" class="buttonSelect" onclick="{!c.selectVacancy}"/>
-                    	</div>
-  					</aura:if>
+               		<br/>
+                    <div data-index="{!index}" aura:id="divDetailsId" class="slds-hide">
+                        <p><b>Detailed INFO about {!jobAdvertisement.Name}</b></p>
+                        <lightning:button aura:id="buttonSelectId" label="Select" name="{!jobAdvertisement}" class="buttonSelect" onclick="{!c.selectVacancy}"/>
+                    </div>
     			</lightning:layout>
     		</aura:iteration>
         </div>

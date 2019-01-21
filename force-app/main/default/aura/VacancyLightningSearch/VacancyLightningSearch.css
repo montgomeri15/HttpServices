@@ -71,7 +71,7 @@
     float: right;
 }
 
-.THIS .divDetails {
+.THIS .showDivDetails {
     margin-top: -3px;
     width: 630px;
     height: 170px;
@@ -86,6 +86,11 @@
     animation: divDetailsShow 0.4s;
 }
 
+@keyframes divDetailsShow {
+    from {height: 0px; padding-top: 0%; font-size: 0px; color: #66C2FF;}
+  	to {height: 170px; padding-top: 11%; font-size: 14px; color: #000;}
+}
+
 .THIS .buttonSelect {
     margin: 35px 30px 0px 0px; /* top right bottom left */
     opacity: 0;
@@ -94,19 +99,33 @@
     padding: -1px 18px;
     font-size: 16px;
     float: right;
-    animation: buttonSelectShow 0.8s;
+    animation: buttonSelectShow 0.4s;
     animation-delay: 0.1s;
     animation-fill-mode: forwards;
 }
 
-@keyframes divDetailsShow {
-  from {height: 0px; padding-top: 0%; font-size: 0px; color: #66C2FF;}
-  to {height: 170px; padding-top: 11%; font-size: 14px; color: #000;}
+@keyframes buttonSelectShow {
+  	from {background-color: #66C2FF; color: #66C2FF; opacity: 0;}
+  	to {background-color: #FFBB33; color: white; opacity: 1;}
 }
 
-@keyframes buttonSelectShow {
-  from {background-color: #66C2FF; color: #66C2FF; opacity: 0;}
-  to {background-color: #FFBB33; color: white; opacity: 1;}
+.THIS .changeSelectButton {
+    margin: 35px 30px 0px 0px;
+    opacity: 0;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    padding: -1px 18px;
+    font-size: 16px;
+    float: right;
+    animation: changedSelectButton 0.4s;
+    animation-delay: 0.1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes changedSelectButton {
+  	from {background-color: #66C2FF; color: #66C2FF; opacity: 0;}
+  	to {background-color: #D3D3D3; color: white; opacity: 1;}
 }
 
 /* 2nd cmp */
@@ -155,17 +174,6 @@
     border-color: #DBDBDB;
     border-radius: 5px;
     background-color: white;
-}
-
-.THIS .changeMe {
-    margin: 35px 30px 0px 0px; /* top right bottom left */
-    border: none;
-    border-radius: 7px;
-    color: white;
-    padding: -1px 18px;
-    font-size: 16px;
-    float: right;
-    background-color: #D3D3D3;
 }
 
 .THIS .spanButtonClose {
