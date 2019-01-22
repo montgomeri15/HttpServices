@@ -92,7 +92,31 @@
         component.set("v.popupIsOpen", true);
     },
     
-    sendPopup : function(component, event, helper) {
+    createResume : function(component, event, helper) {
+        let resume = component.get("v.resume");
+        let action = component.get("c.createRecord");
+        action.setParams({resume : resume});
+        
+        action.setCallback(this,function(a){
+            var state = a.getState();
+            
+            if(state == "SUCCESS"){
+                let newResume = {"sobjectType" : "Resume__c",
+                                 "Full_Name__c" : "",
+                                 "Age__c" : "",
+                                 "Salary__c" : "",
+                                 "Email__c": "",
+                                 "Phone__c": "",
+                                 "Status__c": "",
+                                 "Additional_Info__c": ""
+                                 };
+                component.set("v.resume", newResume);
+                alert('Record is Created Successfully');
+            } else if(state == "ERROR"){
+                alert('Error in calling server side action');
+            }
+        });
+        $A.enqueueAction(action);
         component.set("v.popupIsOpen", false);
     },
     
@@ -101,8 +125,9 @@
     },
     
     handleUploadFinished: function (cmp, event) {
-        // This will contain the List of File uploaded data and status
-        var uploadedFiles = event.getParam("files");
+        //This will contain the List of File uploaded data and status
+        let uploadedFiles = event.getParam("files");
         alert("Files uploaded : " + uploadedFiles.length);
     },
+   
 })

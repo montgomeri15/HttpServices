@@ -1,12 +1,19 @@
-<aura:component controller="VacancyLightningSearchApex">
+<aura:component controller="VacancyLightningSearchApex" access="global">
     
     <!-- 1st cmp -->
-    
+
     <aura:attribute name="jobAdvertisements" type="Job_Advertisement__c[]"/>
     <aura:handler name="init" action="{!c.doBigVacancyCards}" value="{!this}"/>
-    <aura:attribute name="Boolean" type="Boolean" default="false"/>
     <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]"/>
     <aura:attribute name="popupIsOpen" type="boolean" default="false"/>
+    <aura:attribute name="resume" type="Resume__c" default="{'sobjectType': 'Resume__c',
+                         'Age__c': '',
+                         'Salary__c': '',
+                         'Email__c': '', 
+                         'Phone__c': '',
+                         'Status__c': '',
+                         'Additional_Info__c': '', 
+                       }"/>
     
     <div class="slds-grid slds-gutters divMain">
         <div class="slds-col div1Column">
@@ -81,30 +88,25 @@
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                         <div class="slds-grid">
                         	<span class="slds-size_1-of-2 slds-m-around_x-small">
-								<lightning:input type="text" class="namePopup" placeholder="Full Name"/>
-        						<lightning:input type="integer" class="agePopup" placeholder="Age"/>
-                            	<lightning:input type="currency" class="salaryPopup" placeholder="Salary"/>
-        						<lightning:input type="email" class="emailPopup" placeholder="Email"/> 
-                            	<lightning:input type="phone" class="phonePopup" placeholder="Phone"/>
-                            	<lightning:select class="statusPopup" variant="label-hidden" label="">
+								<lightning:input type="text" class="namePopup" placeholder="Full Name" value="{!v.resume.Full_Name__c}"/>
+        						<lightning:input type="number" min="18" max="65" class="agePopup" placeholder="Age" value="{!v.resume.Age__c}"/>
+                            	<lightning:input type="number" min="50000" max="999999" class="salaryPopup" placeholder="Salary" value="{!v.resume.Salary__c}"/>
+        						<lightning:input type="email" class="emailPopup" placeholder="Email" value="{!v.resume.Email__c}"/> 
+                            	<lightning:input type="phone" pattern="[0-9]*" class="phonePopup" placeholder="Phone" value="{!v.resume.Phone__c}"/>
+                            	<lightning:select class="statusPopup" variant="label-hidden" label="" value="{!v.resume.Status__c}">
                     				<option value="Status">Status</option>
         							<option value="Employed">Employed</option>
         							<option value="Unemployed">Unemployed</option>
     							</lightning:select>
-                            	<lightning:textarea placeholder="Additional Info"/>
+                            	<lightning:textarea placeholder="Additional Info" value="{!v.resume.Additional_Info__c}"/>
                         	</span>
                             <span class="slds-size_1-of-2 slds-m-around_x-small">
-                            	<lightning:fileUpload  name="fileUploader"
-                           multiple="{!v.multiple}"
-                           accept="{!v.accept}"
-                           disabled="{!v.disabled}"
-                           recordId="abcd"
-                           onuploadfinished="{!c.handleUploadFinished}"/>
+                            	<lightning:fileUpload name="fileUploader" accept="image/*" recordId="abcd" onuploadfinished="{!c.handleUploadFinished}"/>
                             </span>
                         </div>
                     </div>
                     <footer class="slds-modal__footer">
-                        <lightning:button variant="brand" label="Send" title="Send" onclick="{!c.sendPopup}"/>
+                        <lightning:button variant="brand" label="Send" title="Send" onclick="{!c.createResume}"/>
                         <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{!c.closePopup}"/>
                     </footer>
                 </div>

@@ -43,10 +43,11 @@
 }
 
 .THIS .slds-form-element__help {
-    font-size: .75rem;
-    display: block;
     position: absolute;
-    bottom: 40px;
+    bottom: 39px;
+    color:#fff;
+    font-size:0.0001em;
+    text-indent:-9999px;
 }
 
 .THIS .salaryRange select  {
