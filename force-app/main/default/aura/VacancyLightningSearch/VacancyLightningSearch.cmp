@@ -7,13 +7,16 @@
     <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]"/>
     <aura:attribute name="popupIsOpen" type="boolean" default="false"/>
     <aura:attribute name="resume" type="Resume__c" default="{'sobjectType': 'Resume__c',
-                         'Age__c': '',
-                         'Salary__c': '',
-                         'Email__c': '', 
-                         'Phone__c': '',
-                         'Status__c': '',
-                         'Additional_Info__c': '', 
-                       }"/>
+                                                             'Age__c': '',
+                                                             'Salary__c': '',
+                                                             'Email__c': '', 
+                                                             'Phone__c': '',
+                                                             'Status__c': '',
+                                                             'Additional_Info__c': '', 
+                                                           }"/>
+    <aura:attribute name="fileName" type="String"/>
+    <aura:attribute name="fileExtension" type="String"/>
+
     
     <div class="slds-grid slds-gutters divMain">
         <div class="slds-col div1Column">
@@ -101,7 +104,9 @@
                             	<lightning:textarea placeholder="Additional Info" value="{!v.resume.Additional_Info__c}"/>
                         	</span>
                             <span class="slds-size_1-of-2 slds-m-around_x-small">
-                            	<lightning:fileUpload name="fileUploader" accept="image/*" recordId="abcd" onuploadfinished="{!c.handleUploadFinished}"/>
+                            	<!--<lightning:fileUpload name="fileUploader" accept="image/*" recordId="abcd" onuploadfinished="{!c.handleUploadFinished}"/>-->
+                                <input type="file" name="file" accept="image/*" id="fotofile" aura:id="file" class="inputfile" onchange="{!c.handleFileSelected}"/>
+                                <p><img class="imagePreview" aura:id="imagePreview"/></p>
                             </span>
                         </div>
                     </div>

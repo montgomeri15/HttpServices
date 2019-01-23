@@ -105,10 +105,10 @@
                                  "Full_Name__c" : "",
                                  "Age__c" : "",
                                  "Salary__c" : "",
-                                 "Email__c": "",
-                                 "Phone__c": "",
-                                 "Status__c": "",
-                                 "Additional_Info__c": ""
+                                 "Email__c" : "",
+                                 "Phone__c" : "",
+                                 "Status__c" : "",
+                                 "Additional_Info__c" : ""
                                  };
                 component.set("v.resume", newResume);
                 alert('Record is Created Successfully');
@@ -123,11 +123,42 @@
     closePopup : function(component, event, helper) {
         component.set("v.popupIsOpen", false);
     },
-    
-    handleUploadFinished: function (cmp, event) {
-        //This will contain the List of File uploaded data and status
-        let uploadedFiles = event.getParam("files");
-        alert("Files uploaded : " + uploadedFiles.length);
-    },
+        
+    handleFileSelected: function(component, event, helper) {  //Вешать действие на onchange и вот так получать event.getSource().get("v.files")
+		let fileInput = component.find("file").getElement();
+		let file = fileInput.files[0];
+        let MAX_FILE_SIZE = 1048576;
+
+        if(file.size > MAX_FILE_SIZE){
+            alert("Too big!");
+        } else if(file.type.indexOf("image/") != 0){
+            alert("Wrong extension :P");   
+        } else{
+            let fileAsAString = "";
+            let reader = new FileReader();
+            reader.onloadend = function() {
+                fileAsAString = btoa(reader.result);
+                component.set("v.file", fileAsAString); 
+        	}
+        	reader.readAsBinaryString(file); 
+                    
+            let img = component.find("imagePreview").getElement();
+            img.src = URL.createObjectURL(file);
+            
+            let fullPath = document.getElementById('fotofile').value;
+            if (fullPath) {
+                let startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+                let filename = fullPath.substring(startIndex);
+                if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                    filename = filename.substring(1);
+                }
+                let index = filename.lastIndexOf(".");
+                let Name = filename.substring(0, index);
+                let fileExtension = filename.substring(index);
+            }
+            component.set("v.fileName", Name);
+            component.set("v.fileExtension", fileExtension);
+        }
+	},
    
 })
