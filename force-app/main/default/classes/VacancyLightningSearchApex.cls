@@ -1,7 +1,7 @@
 public with sharing class VacancyLightningSearchApex {
     
     @AuraEnabled
-    public List<Job_Advertisement__c> getAllVacancies() {
+    public static List<Job_Advertisement__c> getAllVacancies() {
         return [SELECT Id, Name, Salary__c, Location__c, Published_Date__c
 				FROM Job_Advertisement__c];
     }
@@ -32,6 +32,30 @@ public with sharing class VacancyLightningSearchApex {
         } catch (Exception ex){ 
             System.debug('Something is wrong:' + ex);
         }
+    }
+    
+    @AuraEnabled
+    public static void save(Id resumeId, String versionData){ 
+        	ContentVersion currentContentVersion = new ContentVersion(
+            	Title = 'title',
+            	PathOnClient = 'pathOnClient',
+            	VersionData = EncodingUtil.base64Decode(versionData),
+            	FirstPublishLocationId = resumeId
+        	); 
+            insert currentContentVersion;
+        
+    Id cdID = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id =: currentContentVersion.Id].ContentDocumentId;
+        
+        
+    //currentContentVersion = [select id, ContentDocumentId from ContentVersion WHERE Id =: currentContentVersion.Id];
+    ContentVersion testContent = [SELECT id, ContentDocumentId FROM ContentVersion where Id = :currentContentVersion.Id];
+
+ContentDocumentLink contentlink=new ContentDocumentLink();
+contentlink.LinkedEntityId=resumeId;
+contentlink.ShareType= 'V';
+contentlink.ContentDocumentId=testcontent.ContentDocumentId;
+
+insert contentlink;  
     }
     
     /*@AuraEnabled

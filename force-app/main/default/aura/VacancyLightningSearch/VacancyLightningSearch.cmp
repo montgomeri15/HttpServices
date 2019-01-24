@@ -1,5 +1,7 @@
 <aura:component controller="VacancyLightningSearchApex" access="global">
     
+    
+    
     <!-- 1st cmp -->
 
     <aura:attribute name="jobAdvertisements" type="Job_Advertisement__c[]"/>
@@ -12,8 +14,18 @@
                                                              'Email__c': '', 
                                                              'Phone__c': '',
                                                              'Status__c': '',
-                                                             'Additional_Info__c': '', 
-                                                           }"/>
+                                                             'Additional_Info__c': ''
+                                                           	}"/>
+    
+    <aura:attribute name="cv" type="ContentVersion" default="{'sobjectType': 'ContentVersion',
+                                                              'Title': '',
+                                                              'PathOnClient': '',
+                                                              'VersionData': '', 
+                                                              'FirstPublishLocationId': ''
+                                                              }"/>
+                
+   
+    
     <aura:attribute name="fileName" type="String"/>
     <aura:attribute name="fileExtension" type="String"/>
 
@@ -105,7 +117,7 @@
                         	</span>
                             <span class="slds-size_1-of-2 slds-m-around_x-small">
                             	<!--<lightning:fileUpload name="fileUploader" accept="image/*" recordId="abcd" onuploadfinished="{!c.handleUploadFinished}"/>-->
-                                <input type="file" name="file" accept="image/*" id="fotofile" aura:id="file" class="inputfile" onchange="{!c.handleFileSelected}"/>
+                                <lightning:input type="file" name="file" accept="image/*" id="photoFile" aura:id="inputFile" class="inputfile" onchange="{!c.handleFileSelected}"/>
                                 <p><img class="imagePreview" aura:id="imagePreview"/></p>
                             </span>
                         </div>
