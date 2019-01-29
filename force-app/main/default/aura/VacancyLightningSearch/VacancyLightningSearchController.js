@@ -40,6 +40,12 @@
         $A.enqueueAction(filterVacancies);
     },
     
+    clearFilters : function(component, event, helper) {
+        component.find("inputNameId").set("v.value", "");
+        component.find("selectSalaryId").set("v.value", "");
+        component.find("inputDateId").set("v.value", "");
+    },
+    
     showDetails : function(component, event, helper) {
         var infos = component.find("divDetailsId"), index = event.target.closest("[data-index]").dataset.index;  //Get the index value
 		infos = infos.length ? infos : [infos];  //Normalize to array
@@ -65,27 +71,48 @@
         let selectButton = event.getSource();   
         selectButton.set("v.disabled", true);
         selectButton.set("v.class", "changeSelectButton");
+        
+        helper.vacanciesQuantity(component);
     },
     
     // 2nd cmp
         
     deselectTheCard : function(component, event, helper) {
-        let jobAdvertisements = component.get("v.jobAdvertisements");
         let selectedVacancies = component.get("v.selectedVacancies");
+        let selectButton = component.find("buttonSelectId");
+        let closeButtonValue = event.getSource().get("v.value");
         
-        let infos = component.find("buttonSelectId");
-        
-        let toDeletIndex =  event.getSource().get("v.name");  //It works because of indexVar="index" in iteration and name="{!index}"
-    	selectedVacancies.splice(toDeletIndex, 1);        
+        for(let i=0; i<selectButton.length; i++){
+            for (let j=0; j<selectedVacancies.length; j++){
+            	let selectButtonValue = selectButton[i].get("v.value");
+                if(selectButtonValue == closeButtonValue){
+                    selectButton[i].set("v.disabled", false);
+                    selectButton[i].set("v.class", "buttonSelect");
+                }
+            }
+        }
+        let toDeletIndex = event.getSource().get("v.name");  //It works because of indexVar="index" in iteration and name="{!index}"
+        selectedVacancies.splice(toDeletIndex, 1);        
     	component.set("v.selectedVacancies", selectedVacancies);
         
-        for(let j=0; j<jobAdvertisements.length; j++){
-        	for (let i=0; i<selectedVacancies.length; i++){
-            	if((jobAdvertisements[j].Id) == (selectedVacancies[i].Id)){
-                	console.log(selectedVacancies[i].Id); 
-            	}			
-			}
+        helper.vacanciesQuantity(component);
+    },
+    
+    clearSelectedVacancies : function(component, event, helper) {
+        let selectedVacancies = component.get("v.selectedVacancies");
+        let selectButton = component.find("buttonSelectId");
+        let closeButtonValue = event.getSource().get("v.value");
+        
+        for(let i=0; i<selectButton.length; i++){
+            for (let j=0; j<selectedVacancies.length; j++){
+                selectButton[i].set("v.disabled", false);
+                selectButton[i].set("v.class", "buttonSelect");
+            }
         }
+        selectedVacancies.splice(0, selectedVacancies.length);
+        component.set("v.selectedVacancies", selectedVacancies);
+        
+        helper.vacanciesQuantity(component);
     },
     
     popupMenu : function(component, event, helper) {
@@ -93,31 +120,51 @@
     },
     
     createResume : function(component, event, helper) {
-        let resume = component.get("v.resume");
-        let action = component.get("c.createRecord");
-        action.setParams({resume : resume});
+        let requiredFieldIdName = component.find('requiredFieldIdName');
+        let requiredFieldIdAge = component.find('requiredFieldIdAge');
+        let requiredFieldIdSalary = component.find('requiredFieldIdSalary');
+        let requiredFieldIdEmail = component.find('requiredFieldIdEmail');
+        let requiredFieldIdPhone = component.find('requiredFieldIdPhone');
+        let requiredFieldIdStatus = component.find('requiredFieldIdStatus');
         
-        action.setCallback(this,function(a){
-            var state = a.getState();
+        requiredFieldIdName.showHelpMessageIfInvalid();
+        requiredFieldIdAge.showHelpMessageIfInvalid();
+        requiredFieldIdSalary.showHelpMessageIfInvalid();
+        requiredFieldIdEmail.showHelpMessageIfInvalid();
+        requiredFieldIdPhone.showHelpMessageIfInvalid();
+        requiredFieldIdStatus.showHelpMessageIfInvalid();
+        
+        if(requiredFieldIdName.get("v.validity").valid && requiredFieldIdAge.get("v.validity").valid &&
+           requiredFieldIdSalary.get("v.validity").valid && requiredFieldIdEmail.get("v.validity").valid &&
+           requiredFieldIdPhone.get("v.validity").valid && requiredFieldIdStatus.get("v.validity").valid){
             
-            if(state == "SUCCESS"){
-                let newResume = {"sobjectType" : "Resume__c",
-                                 "Full_Name__c" : "",
-                                 "Age__c" : "",
-                                 "Salary__c" : "",
-                                 "Email__c" : "",
-                                 "Phone__c" : "",
-                                 "Status__c" : "",
-                                 "Additional_Info__c" : ""
-                                 };
-                component.set("v.resume", newResume);
-                alert('Record is Created Successfully');
-            } else if(state == "ERROR"){
-                alert('Error in calling server side action');
-            }
-        });
-        $A.enqueueAction(action);
-        component.set("v.popupIsOpen", false);
+            let resume = component.get("v.resume");
+            let selectedVacancies = component.get("v.selectedVacancies");
+            let action = component.get("c.createRecord");
+            action.setParams({resume : resume});
+            
+            action.setCallback(this,function(a){
+                let state = a.getState();
+                
+                if(state == "SUCCESS"){
+                    let newResume = {"sobjectType" : "Resume__c",
+                                     "Full_Name__c" : "",
+                                     "Age__c" : "",
+                                     "Salary__c" : "",
+                                     "Email__c" : "",
+                                     "Phone__c" : "",
+                                     "Status__c" : "",
+                                     "Additional_Info__c" : ""
+                                     };
+                    component.set("v.resume", newResume);
+                    alert('Record is Created Successfully');
+                } else if(state == "ERROR"){
+                    alert('Error message: error in calling server side action');
+                }
+            });
+            $A.enqueueAction(action);
+            component.set("v.popupIsOpen", false);
+        }  
     },
     
     closePopup : function(component, event, helper) {
@@ -125,39 +172,38 @@
     },
         
     handleFileSelected: function(component, event, helper) {
+        let MAX_FILE_SIZE = 25000;
         let files = event.getParam("files");
         let file = files[0];
-        console.log(file);
 
-        let img = component.find("imagePreview").getElement();
-        img.src = URL.createObjectURL(file);
-        
-        let action = component.get("c.save");
-        
-        
-        
-        var fr = new FileReader();
-
-        fr.onload = function() {
-            var fileContents = fr.result;
-            var base64Mark = 'base64,';
-            var dataStart = fileContents.indexOf(base64Mark) + base64Mark.length;
-
-            fileContents = fileContents.substring(dataStart);
+        if(file.type.indexOf("image/jpg") != 0 && file.type.indexOf("image/png") != 0 && file.type.indexOf("image/jpeg") != 0){
+            alert('Incorrect file extension. Please upload your photo!\nCorrect extensions: *.jpg, *.jpeg, *.png.');
+            return;
+        } else if(file.size > MAX_FILE_SIZE){
+            alert('File size cannot exceed ' + MAX_FILE_SIZE + ' bytes.\n' + 'Selected file size: ' + file.size + ' bytes.');
+            return;
+        } else{
+            let img = component.find("imagePreview").getElement();
+            img.src = URL.createObjectURL(file);
             
-            action.setParams({
-                resumeId : 'a010E000004UFP3',
-                versionData : fileContents
-      		});
-			$A.enqueueAction(action);
-
-        };
-
-        fr.readAsDataURL(file);
-        
-        
-        
-                 
+            let action = component.get("c.save");
+            let fileReader = new FileReader();
+    
+            fileReader.onload = function() {
+                let fileContents = fileReader.result;
+                let base64Mark = 'base64,';
+                let dataStart = fileContents.indexOf(base64Mark) + base64Mark.length;
+    
+                fileContents = fileContents.substring(dataStart);
+                
+                action.setParams({
+                    resumeId : 'a01f400000Nx9vgAAB',
+                    versionData : fileContents
+                });
+                $A.enqueueAction(action);
+            };
+            fileReader.readAsDataURL(file); 
+        }        
 	},
     
     /*save : function(component) {
