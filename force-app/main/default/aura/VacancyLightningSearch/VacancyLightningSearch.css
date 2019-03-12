@@ -1,278 +1,319 @@
+.THIS.divMain {
+    width: 100%;
+}
+
+/* 1st cmp */
+
 .THIS .div1Column {
-    margin-bottom: 15px;
- }
- 
- .THIS.divMain {
-     margin: auto;
-       width: 1000px;
- }
- 
- /* 1st cmp */
- 
- .THIS .layoutSearchMainColumn {
-     margin-bottom: 14px;
-     width: 630px;
-     float: right;
- }
- 
- .THIS .layoutBigCardsColumn {
-     width: 630px;
-     float: right;
- }
- 
- .THIS .vacancyName input {
-     width: 158.5px;
-     height: 40px;
-     border-radius: 3px 0px 0px 3px;
-     color: #808080;
- }
- 
- .THIS ::placeholder {
-     color: #D3D3D3;
- }
- 
- .THIS .publishedDate input {    
-     width: 158.5px;
-     height: 40px;
-     border-radius: 0px;
-     color: #808080;
- }
- 
- .THIS .slds-form-element__help {
-     position: absolute;
-     bottom: 39px;
-     color:#fff;
-     font-size:0.0001em;
-     text-indent:-9999px;
- }
- 
- .THIS .salaryRange select  {
-     width: 130px;
-     height: 40px;
-     border-radius: 0px 3px 3px 0px;
-     color: #808080;
- }
- 
- .THIS .groupButtonFilter {
-     margin-left: 3px;
- }
- 
- .THIS .buttonSearch {
-     width: 100px;
-     background-color: #FFBB33;
-     color: white;
-     font-size: 14px;
-     font-weight: bold;
-     height: 40px;
- }
- 
- .THIS .buttonClearFilters {
-     width: 80px;
-     background-color: #F5F5F5;
-     color: #A9A9A9;
-     font-size: 14px;
-     font-weight: bold;
-     height: 40px;
- }
- 
- .THIS .divResults {
-     margin-top: 8px;
-     width: 630px;
-     height: 83px;
-     border-style: solid;
-     border-width: 1px;
-     border-color: #DBDBDB;
-     border-radius: 5px;
-     background-color: white;
- }
- 
- .THIS .divDetailsColumn {
-     opacity: 0;
-     margin-right: 5px;
-     text-align: left;
-     font-size: 12px;
-     width: 200px;
-     height: 100%;
-     animation: divDetailsColumnShow 0.4s;
-     animation-delay: 0.3s;
-     animation-fill-mode: forwards;
- }
- 
- @keyframes divDetailsColumnShow {
-     from {opacity: 0;}
-       to {opacity: 1;}
- }
- 
- .THIS .spanButtonToResults {
-     float: right;
- }
- 
- .THIS .showDivDetails {
-     margin-top: -3px;
-     width: 630px;
-     height: 170px;
-     border-style: solid;
-     border-width: 1px;
-     border-color: #DBDBDB;
-     border-radius: 0px 0px 5px 5px;
-     padding: 1%;
-     padding-top: 1%;
-     background-color: #66C2FF;
-     animation: divDetailsShow 0.4s;
-     animation-fill-mode: forwards;
- }
- 
- @keyframes divDetailsShow {
-     from {height: 0px;}
-       to {height: 170px;}
- }
- 
- .THIS .buttonSelect {
-     margin-top: 125px; /* top right bottom left */
-     opacity: 0;
-     border: none;
-     border-radius: 7px;
-     font-size: 16px;
-     float: right;
-     animation: buttonSelectShow 0.4s;
-     animation-delay: 0.2s;
-     animation-fill-mode: forwards;
- }
- 
- @keyframes buttonSelectShow {
-       from {background-color: #66C2FF; color: #66C2FF; opacity: 0;}
-       to {background-color: #FFBB33; color: white; opacity: 1;}
- }
- 
- .THIS .changeSelectButton {
-     margin-top: 125px;
-     opacity: 0;
-     border: none;
-     border-radius: 7px;
-     font-size: 16px;
-     float: right;
-     animation: changedSelectButton 0.4s;
-     animation-delay: 0.2s;
-     animation-fill-mode: forwards;
- }
- 
- @keyframes changedSelectButton {
-       from {background-color: #66C2FF; color: #66C2FF; opacity: 0;}
-       to {background-color: #D3D3D3; color: white; opacity: 1;}
- }
- 
- /* 2nd cmp */
- 
- .THIS .div2Column {
-     margin-top: 21px;
- }
- 
- .THIS .layoutCardsColumn {
-     width: 265px;
-     float: left;
- }
- 
- .THIS .selectedJobsTop {
-     font-size: 12px;
- }
- 
- .THIS .circleNumbers {
-     justify-content: center;
-     align-items: center;
-     border-radius: 100%;
-     background-color: #FFBB33;
-     display: inline;
-     padding: 7px;
-     font-size: 11px;
-     font-weight: bold;
-     color: white;
- }
- 
- .THIS .groupButtonSmallCards {
-     margin-left: -10px;
- }
- 
- .THIS .buttonApply {
-     margin-left: 15px;
-     padding: -10px;
-     background-color: #FFBB33;
-     border-radius: 8px;
-     color: white;
-     font-size: 16px;
- }
- 
- .THIS .buttonClearSmallCards {
-     background-color: #F5F5F5;
-     color: #A9A9A9;
- }
- 
- .THIS .layoutLittleCards {
-     margin-top: 8px;
-     padding: 8px;
-     width: 262px;
-     height: 73px;
-     border-style: solid;
-     border-width: 1px;
-     border-color: #DBDBDB;
-     border-radius: 5px;
-     background-color: white;
- }
- 
- .THIS .spanButtonClose {
-     float: right;
- }
- 
- .THIS .divPopup {
-     width: 1200px;
- }
- 
- .THIS .namePopup {
-     color: #8C8C8C;
- }
- 
- .THIS .agePopup {
-     color: #8C8C8C;
- }
- 
- .THIS .statusPopup {
-     color: #8C8C8C;
- }
- 
- .THIS .emailPopup {
-     color: #8C8C8C;
- }
- 
- .THIS .phonePopup {
-     color: #8C8C8C;
- }
- 
- .THIS .salaryRangePopup select {
-     width: 100%;
-     height: 33px;
-     border-radius: 4px;
-     color: #8C8C8C;
- }
- 
- .THIS .slds-textarea {
-     height: 78px !important;
-     color: #8C8C8C;
- }
- 
- .THIS .inputFile {
-     margin-top: 5px;
- }
- 
- .THIS .imagePreview {
-     max-height: 300px;
- }
- 
- .THIS .divImagePreview {
-     margin-left: 5px;
-     margin-top: 20px;
-     width: 240px;
-     height: 330px;
-     padding: 2%;
-     text-align: center;
-     overflow: auto;
- }
+  margin-bottom: 15px;
+}
+
+.THIS .layoutSearchMainColumn {
+  margin-bottom: 14px;
+  width: 77%;
+  float: right;
+}
+
+.THIS .layoutBigCardsColumn {
+  width: 77%;
+  float: right;
+
+}
+
+.THIS .vacancyName input {
+  height: 40px;
+  border-radius: 3px 0px 0px 3px;
+  color: #808080;
+}
+
+.THIS ::placeholder {
+  color: #D3D3D3;
+}
+
+.THIS .publishedDate input {    
+  height: 40px;
+  border-radius: 0px;
+  color: #808080;
+}
+
+.THIS .slds-form-element__help {
+  position: absolute;
+  bottom: 39px;
+  color:#fff;
+  font-size:0.0001em;
+  text-indent:-9999px;
+}
+
+.THIS .salaryRange select  {
+  height: 40px;
+  border-radius: 0px 3px 3px 0px;
+  color: #808080;
+}
+
+.THIS .buttonSearch {
+  margin-left: 1%;
+  background-color: #FFBB33;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.THIS .buttonReset {
+  background-color: #F5F5F5;
+  color: #A9A9A9;
+  font-size: 14px;
+  font-weight: bold;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.THIS .divResults {
+  margin-top: 8px;
+  width: 100%;
+  height: 83px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #DBDBDB;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.THIS .divDetailsColumn {
+  opacity: 0;
+  margin-right: 5px;
+  text-align: left;
+  font-size: 12px;
+  height: 100%;
+  animation: divDetailsColumnShow 0.4s;
+  animation-delay: 0.3s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes divDetailsColumnShow {
+  from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.THIS .spanButtonToResults {
+  float: right;
+}
+
+.THIS .showDivDetails {
+  margin-top: -3px;
+  width: 100%;
+  height: 170px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #DBDBDB;
+  border-radius: 0px 0px 5px 5px;
+  padding: 1%;
+  padding-top: 1%;
+  background-color: #FFF6E9;
+  animation: divDetailsShow 0.4s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes divDetailsShow {
+  from {height: 0px;}
+    to {height: 170px;}
+}
+
+.THIS .buttonSelect {
+  margin-top: 125px; /* top right bottom left */
+  opacity: 0;
+  border: none;
+  border-radius: 7px;
+  font-size: 16px;
+  float: right;
+  animation: buttonSelectShow 0.4s;
+  animation-delay: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes buttonSelectShow {
+    from {background-color: #FDEFDD; color: #FDEFDD; opacity: 0;}
+    to {background-color: #FFBB33; color: white; opacity: 1;}
+}
+
+.THIS .changeSelectButton {
+  margin-top: 125px;
+  opacity: 0;
+  border: none;
+  border-radius: 7px;
+  font-size: 16px;
+  float: right;
+  animation: changedSelectButton 0.4s;
+  animation-delay: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes changedSelectButton {
+    from {background-color: #FDEFDD; color: #FDEFDD; opacity: 0;}
+    to {background-color: #D3D3D3; color: white; opacity: 1;}
+}
+
+/* 2nd cmp */
+
+.THIS .div2Column {
+  margin-top: 21px;
+  margin-right: 15%;
+
+}
+
+.THIS .selectedJobsTop {
+  font-size: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.THIS .circleNumbers {
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  background-color: #FFBB33;
+  display: inline;
+  padding: 7px;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+}
+
+.THIS .layoutCardsColumn {
+  margin-bottom: 15px;
+  width: 285px;
+  float: left;
+}
+
+.THIS .selectedJobsColumn {
+  position: fixed;
+}
+
+.THIS .groupButtonSmallCards {
+  margin-left: -10px;
+}
+
+.THIS .buttonApply {
+  margin-left: 15px;
+  padding: -10px;
+  background-color: #FFBB33;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+}
+
+.THIS .buttonDisabledApply {
+  margin-left: 15px;
+  padding: -10px;
+  background-color: #D3D3D3;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+}
+
+.THIS .buttonClearSmallCards {
+  background-color: #F5F5F5;
+  color: #A9A9A9;
+}
+
+.THIS .selectedJobs {
+  margin-top: 5px;
+  padding: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #DBDBDB;
+  border-radius: 5px;
+  font-size: 12px;
+  height: 450px;
+  width: 100%;
+  background-color: #F5F5F5;
+  
+}
+
+.THIS .layoutLittleCards {
+  margin-top: 8px;
+  padding: 8px;
+  width: 220px;
+  height: 73px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #DBDBDB;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.THIS .spanButtonClose {
+  float: right;
+}
+
+.THIS .divPagination {
+  margin-bottom: 15px;
+  position: fixed;
+  bottom: 0;
+}
+
+.THIS .divPaginationBottomBlock {
+  width: 220px;
+}
+
+.THIS .divPaginationSelect {
+  width: 46px;
+}
+
+
+/* Popup menu */
+
+.THIS .divPopup {
+  width: 1200px;
+}
+
+.THIS .namePopup {
+  color: #8C8C8C;
+}
+
+.THIS .agePopup {
+  color: #8C8C8C;
+}
+
+.THIS .salaryPopup {
+  color: #8C8C8C;
+}
+
+.THIS .statusPopup {
+  color: #8C8C8C;
+}
+
+.THIS .emailPopup {
+  color: #8C8C8C;
+}
+
+.THIS .phonePopup {
+  color: #8C8C8C;
+}
+
+.THIS .slds-textarea {
+  height: 78px !important;
+  color: #8C8C8C;
+}
+
+.THIS .inputFile {
+  margin-top: 5px;
+}
+
+.THIS .imagePreview {
+  max-height: 300px;
+}
+
+.THIS .divImagePreview {
+  margin-left: 5px;
+  margin-top: 20px;
+  width: 240px;
+  height: 330px;
+  padding: 2%;
+  text-align: center;
+  overflow: auto;
+}
 

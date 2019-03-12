@@ -56,6 +56,8 @@ sfdx force:data:tree:import -f data/1000_Resume__c.json -u myscratchorg
 * EndpointResume - 83%
 * JobAdvertisementEndpoint - 94%
 
+* VacancyLightningSearchApex
+
 
 ### Test classes:
 * VacancyControllerTest
@@ -65,3 +67,7 @@ sfdx force:data:tree:import -f data/1000_Resume__c.json -u myscratchorg
 
 ### Needed VF Page:
 * VacancyVF
+
+
+### Needed Lightning component:
+* VacancyLightningSearch

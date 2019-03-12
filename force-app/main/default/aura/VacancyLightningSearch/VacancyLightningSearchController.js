@@ -1,55 +1,28 @@
 ({
     // 1st cmp
-
-    doBigVacancyCards : function(component, event, helper) {
-        let getVacancies = component.get("c.getAllVacancies");
-        
-        getVacancies.setCallback(this,function(response){
-            let state = response.getState();
-            if(state === "SUCCESS"){
-                component.set("v.jobAdvertisements", response.getReturnValue());
-                console.log("APEX success!");
-            }else {
-                console.log("Failed with state: " + state);
-            }
-        });
-        $A.enqueueAction(getVacancies);
-	},
     
-    searchVacancy : function(component, event, helper) {
-        let showNameFilter = component.find("inputNameId").get("v.value");
-        let showSalaryFilter = component.find("selectSalaryId").get("v.value");
-        let showDateFilter = component.find("inputDateId").get("v.value");
-
-        let filterVacancies = component.get("c.filterVacancies");
-        filterVacancies.setParams({
-            "filterName" : showNameFilter,
-            "filterSalary" : showSalaryFilter,
-            "filterDate" : showDateFilter
-        });
-        
-        filterVacancies.setCallback(this,function(response){
-            let state = response.getState();
-            if(state === "SUCCESS"){
-                component.set("v.jobAdvertisements", response.getReturnValue());
-                console.log("APEX success!");
-            }else {
-                console.log("Failed with state: " + state);
-            }
-        });
-        $A.enqueueAction(filterVacancies);
+    showAllVacancies : function(component, event, helper) {
+        helper.showAllVacancies(component);
     },
     
+    vacanciesPerPageInit : function(component, event, helper) {
+        let page = 1
+      	let recordToDisply = component.find("recordSize").get("v.value");
+      	helper.getJobAdvertisements(component, page, recordToDisply);
+    },
+
     clearFilters : function(component, event, helper) {
         component.find("inputNameId").set("v.value", "");
         component.find("selectSalaryId").set("v.value", "");
         component.find("inputDateId").set("v.value", "");
+        
+        let vacanciesPerPageInit = component.get("c.vacanciesPerPageInit");  //Call method in method
+        $A.enqueueAction(vacanciesPerPageInit);
     },
     
     showDetails : function(component, event, helper) {
-        var infos = component.find("divDetailsId"), index = event.target.closest("[data-index]").dataset.index;  //Get the index value
+        let infos = component.find("divDetailsId"), index = event.target.closest("[data-index]").dataset.index;  //Get the index value
 		infos = infos.length ? infos : [infos];  //Normalize to array
-        
         let showButton = event.getSource();
         
         if(showButton.get("v.iconName") == "utility:chevrondown"){
@@ -65,13 +38,15 @@
     
     selectVacancy : function(component, event, helper) {
         let selectedVacancies = component.get("v.selectedVacancies");
-    	selectedVacancies.push(event.getSource().get("v.name"));
+        let jobAdvertisement = event.getSource().get("v.name");
+    	selectedVacancies.push(jobAdvertisement);
     	component.set("v.selectedVacancies", selectedVacancies);
         
-        let selectButton = event.getSource();   
+        let selectButton = event.getSource();
         selectButton.set("v.disabled", true);
         selectButton.set("v.class", "changeSelectButton");
         
+        helper.selectVacancy(component, true, jobAdvertisement.Id);
         helper.vacanciesQuantity(component);
     },
     
@@ -88,13 +63,15 @@
                 if(selectButtonValue == closeButtonValue){
                     selectButton[i].set("v.disabled", false);
                     selectButton[i].set("v.class", "buttonSelect");
+                    
+                    helper.selectVacancy(component, false, selectButtonValue);
                 }
             }
         }
         let toDeletIndex = event.getSource().get("v.name");  //It works because of indexVar="index" in iteration and name="{!index}"
         selectedVacancies.splice(toDeletIndex, 1);        
     	component.set("v.selectedVacancies", selectedVacancies);
-        
+
         helper.vacanciesQuantity(component);
     },
     
@@ -119,52 +96,63 @@
         component.set("v.popupIsOpen", true);
     },
     
+    requiredFieldUpdate : function(component, event, helper) {
+        component.set("v.disabled", !component.find("requiredPopupField").every(field => !!field.get("v.value")));
+    },
+    
     createResume : function(component, event, helper) {
-        let requiredFieldIdName = component.find('requiredFieldIdName');
-        let requiredFieldIdAge = component.find('requiredFieldIdAge');
-        let requiredFieldIdSalary = component.find('requiredFieldIdSalary');
-        let requiredFieldIdEmail = component.find('requiredFieldIdEmail');
-        let requiredFieldIdPhone = component.find('requiredFieldIdPhone');
-        let requiredFieldIdStatus = component.find('requiredFieldIdStatus');
+        let requiredPopupField = component.find('requiredPopupField');
+        let emailAddress = component.get("v.resume.Email__c");
         
-        requiredFieldIdName.showHelpMessageIfInvalid();
-        requiredFieldIdAge.showHelpMessageIfInvalid();
-        requiredFieldIdSalary.showHelpMessageIfInvalid();
-        requiredFieldIdEmail.showHelpMessageIfInvalid();
-        requiredFieldIdPhone.showHelpMessageIfInvalid();
-        requiredFieldIdStatus.showHelpMessageIfInvalid();
+        for(let i=0; i<requiredPopupField.length; i++){
+            requiredPopupField[i].showHelpMessageIfInvalid();
+        }
+        let resume = component.get("v.resume");
+        let selectedVacancies = component.get("v.selectedVacancies");
         
-        if(requiredFieldIdName.get("v.validity").valid && requiredFieldIdAge.get("v.validity").valid &&
-           requiredFieldIdSalary.get("v.validity").valid && requiredFieldIdEmail.get("v.validity").valid &&
-           requiredFieldIdPhone.get("v.validity").valid && requiredFieldIdStatus.get("v.validity").valid){
-            
-            let resume = component.get("v.resume");
-            let selectedVacancies = component.get("v.selectedVacancies");
-            let action = component.get("c.createRecord");
-            action.setParams({resume : resume});
-            
-            action.setCallback(this,function(a){
-                let state = a.getState();
+        let action = component.get("c.createRecord");
+        action.setParams({
+            resume : resume,
+            selectedJobAdvertisements : selectedVacancies,
+            popupEmail : emailAddress
+        });
+        
+        let toastEvent = $A.get("e.force:showToast");
                 
-                if(state == "SUCCESS"){
-                    let newResume = {"sobjectType" : "Resume__c",
-                                     "Full_Name__c" : "",
-                                     "Age__c" : "",
-                                     "Salary__c" : "",
-                                     "Email__c" : "",
-                                     "Phone__c" : "",
-                                     "Status__c" : "",
-                                     "Additional_Info__c" : ""
-                                     };
-                    component.set("v.resume", newResume);
-                    alert('Record is Created Successfully');
-                } else if(state == "ERROR"){
-                    alert('Error message: error in calling server side action');
-                }
-            });
-            $A.enqueueAction(action);
-            component.set("v.popupIsOpen", false);
-        }  
+        action.setCallback(this,function(a){
+            let state = a.getState();      
+            if(state == "SUCCESS"){
+                let newResume = {"sobjectType" : "Resume__c",
+                                 "Full_Name__c" : "",
+                                 "Age__c" : "",
+                                 "Salary__c" : "",
+                                 "Email__c" : "",
+                                 "Phone__c" : "",
+                                 "Status__c" : "",
+                                 "Additional_Info__c" : ""
+                                };
+                component.set("v.resume", newResume);
+                toastEvent.setParams({
+                    title: "Success",
+                    message: "Congratulations! You have successfully submitted your resume for selected jobs.",
+                    type: "success"
+                });
+                toastEvent.fire();
+            } else if(state == "ERROR"){
+                let errors = a.getError();
+				let message = 'Unknown error';
+				if (errors && Array.isArray(errors) && errors.length > 0) {
+                    message = errors[0].message;
+				}      
+                toastEvent.setParams({
+                    title: "Error",
+                    message: message,
+                    type: "error"
+                });
+            }
+        });
+        $A.enqueueAction(action);
+        component.set("v.popupIsOpen", false); 
     },
     
     closePopup : function(component, event, helper) {
@@ -172,9 +160,13 @@
     },
         
     handleFileSelected: function(component, event, helper) {
-        let MAX_FILE_SIZE = 25000;
+        let MAX_FILE_SIZE = 1048576;
         let files = event.getParam("files");
         let file = files[0];
+        
+        let resume = component.get("v.resume");
+        let selectedVacancies = component.get("v.selectedVacancies");
+        let emailAddress = component.get("v.resume.Email__c");
 
         if(file.type.indexOf("image/jpg") != 0 && file.type.indexOf("image/png") != 0 && file.type.indexOf("image/jpeg") != 0){
             alert('Incorrect file extension. Please upload your photo!\nCorrect extensions: *.jpg, *.jpeg, *.png.');
@@ -197,8 +189,11 @@
                 fileContents = fileContents.substring(dataStart);
                 
                 action.setParams({
-                    resumeId : 'a01f400000Nx9vgAAB',
-                    versionData : fileContents
+                    filename : file.name,                  
+                    versionData : fileContents,
+                    resume : resume,
+                	selectedJobAdvertisements : selectedVacancies,
+                    popupEmail : emailAddress
                 });
                 $A.enqueueAction(action);
             };
@@ -206,50 +201,16 @@
         }        
 	},
     
-    /*save : function(component) {
-        var fileInput = component.find("file").getElement();
-        var file = fileInput.files[0];
-
-        if (file.size > 1048576) {
-            alert('File size cannot exceed ' + 1048576 + ' bytes.\n' + 'Selected file size: ' + file.size);
-            return;
+    navigate: function(component, event, helper) {
+        let page = component.get("v.page") || 1;
+      	let direction = event.getSource().get("v.label");
+      	let recordToDisply = component.find("recordSize").get("v.value");
+      	page = direction === "Previous" ? (page - 1) : (page + 1);
+        
+        let lastPage = component.get("v.pages");
+        if(direction == "Last"){
+            page = lastPage;
         }
-
-        var fr = new FileReader();
-
-        var self = this;
-        fr.onload = function() {
-            var fileContents = fr.result;
-            var base64Mark = 'base64,';
-            var dataStart = fileContents.indexOf(base64Mark) + base64Mark.length;
-
-            fileContents = fileContents.substring(dataStart);
-
-            self.upload(component, file, fileContents);
-        };
-
-        fr.readAsDataURL(file);
-    },
-
-    upload: function(component, file, fileContents) {
-        var action = component.get("c.saveTheFiles"); 
-
-        action.setParams({
-            parentId: 'a010E000004UFP3QAO', //component.get("v.parentId"),
-            fileName: file.name,
-            base64Data: fileContents,
-            contentType: file.type
-        });
-
-        action.setCallback(this, function(a) {
-            attachId = a.getReturnValue();
-            console.log(attachId);
-        });
-
-        $A.run(function() {
-            $A.enqueueAction(action); 
-        });
-
-    }*/
-   
+      	helper.getJobAdvertisements(component, page, recordToDisply);
+   	},
 })

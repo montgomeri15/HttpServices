@@ -1,9 +1,16 @@
-<aura:component controller="VacancyLightningSearchApex" access="global">
+<aura:component controller="VacancyLightningSearchApex"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                >
 
     <!-- 1st cmp -->
 
+    <aura:attribute name="allJobAdvertisements" type="Job_Advertisement__c[]"/>
     <aura:attribute name="jobAdvertisements" type="Job_Advertisement__c[]"/>
-    <aura:handler name="init" action="{!c.doBigVacancyCards}" value="{!this}"/>
+    
+    <aura:handler name="init" action="{!c.showAllVacancies}" value="{!this}"/>
+    <aura:handler name="init" action="{!c.vacanciesPerPageInit}" value="{!this}"/>
+    
+    
     <aura:attribute name="selectedVacancies" type="Job_Advertisement__c[]"/>
     <aura:attribute name="selectedVacanciesQuantity" type="String" default="00"/>
     <aura:attribute name="popupIsOpen" type="boolean" default="false"/>
@@ -19,25 +26,31 @@
     <aura:attribute name="resumeId" type="Id"/>
     <aura:attribute name="fileName" type="String"/>
     <aura:attribute name="fileExtension" type="String"/>
- 
+    
+    <aura:attribute name="page" type="Integer"/>
+    <aura:attribute name="pages" type="Integer"/>
+    <aura:attribute name="total" type="Integer"/>
+    <aura:attribute name="totalFiltered" type="Integer"/>
+    <aura:attribute name="firstOfotal" type="Integer"/>
+    
+    <aura:attribute name="disabled" type="Boolean" default="true" />
+
     <div class="slds-grid slds-gutters divMain">
         <div class="slds-col div1Column">
     		<lightning:layout verticalAlign="end" class="layoutSearchMainColumn">
-        		<lightning:input aura:id="inputNameId" type="text" class="vacancyName" placeholder="Name of the Vacancy" />
+        		<lightning:input aura:id="inputNameId" type="text" class="vacancyName" placeholder="Name of the Vacancy"/>
         		<lightning:input aura:id="inputDateId" type="date" class="publishedDate" placeholder="Published Date"/>   
         		<lightning:select aura:id="selectSalaryId" class="salaryRange" variant="label-hidden" label="">
                     <option value="Salary range">Salary range</option>
-        			<option value="50K-75K">50К-75К</option>
-        			<option value="75K-90K">75К-90К</option>
-        			<option value="90K-120K">90К-120К</option>
-            		<option value="120K+">120К+</option>
+        			<option value="50K-75K">50K-75K</option>
+        			<option value="75K-90K">75K-90K</option>
+        			<option value="90K-120K">90K-120K</option>
+            		<option value="120K+">120K+</option>
     			</lightning:select>
-                <div class="slds-button-group groupButtonFilter" role="group">
-        			<lightning:button label="SEARCH" class="buttonSearch" onclick="{!c.searchVacancy}"/>
-                	<lightning:button label="CLEAR" class="buttonClearFilters" onclick="{!c.clearFilters}"/>
-                </div>
-                
+        		<lightning:button label="SEARCH" class="buttonSearch" onclick="{!c.vacanciesPerPageInit}"/>
+                <lightning:button label="RESET" class="buttonReset" onclick="{!c.clearFilters}"/>
     		</lightning:layout>
+            
     		<br/>
             <br/>
     		<aura:iteration items="{!v.jobAdvertisements}" var="jobAdvertisement" indexVar="index">     
@@ -67,7 +80,12 @@
                             <p><b>Skills Required: </b>{!jobAdvertisement.Skills_Required__c}</p>
                         </div>
                         <div>
-                        	<lightning:button aura:id="buttonSelectId" value="{!jobAdvertisement.Id}" label="Select" name="{!jobAdvertisement}" class="buttonSelect" onclick="{!c.selectVacancy}"/>
+                            <aura:if isTrue="{!jobAdvertisement.Selected__c}">
+                                <lightning:button aura:id="buttonSelectId" value="{!jobAdvertisement.Id}" label="Select" name="{!jobAdvertisement}" class="changeSelectButton" disabled="true"/>
+                                <aura:set attribute="else">
+                                    <lightning:button aura:id="buttonSelectId" value="{!jobAdvertisement.Id}" label="Select" name="{!jobAdvertisement}" class="buttonSelect" onclick="{!c.selectVacancy}"/>
+                                </aura:set>
+                            </aura:if>
                         </div>
                     </div>
     			</lightning:layout>
@@ -78,79 +96,123 @@
         
     	<div class="slds-col div2Column">
     		<lightning:layout horizontalAlign="center" multipleRows="true" class="layoutCardsColumn">
-                <span class="selectedJobsTop">
-                    <b>Selected Jobs&ensp;</b>
-                    <ui:outputText class="circleNumbers" value="{!v.selectedVacanciesQuantity}"/>
-                    <div class="slds-button-group groupButtonSmallCards" role="group">
-                        <lightning:button label="Apply" class="buttonApply" onclick="{!c.popupMenu}"/>
-                        <lightning:button label="CLEAR" class="buttonClearSmallCards" onclick="{!c.clearSelectedVacancies}"/>
+                <div class="selectedJobsColumn">
+                    <span class="selectedJobsTop">
+                        <b>Selected Jobs&ensp;</b>
+                        <ui:outputText class="circleNumbers" value="{!v.selectedVacanciesQuantity}"/>
+                        <div class="slds-button-group groupButtonSmallCards" role="group">
+                            <lightning:button label="Apply"
+                                              class="{!v.selectedVacancies.length > 0 ? 'buttonApply' : 'buttonDisabledApply'}"
+                                              onclick="{!c.popupMenu}"
+                                              disabled="{!v.selectedVacancies.length > 0 ? 'false' : 'true'}"/>
+                            
+                            <lightning:button label="CLEAR" class="buttonClearSmallCards" onclick="{!c.clearSelectedVacancies}"/>
+                        </div>
+                    </span>
+                    <div class="slds-scrollable--y selectedJobs">
+                        <aura:if isTrue="{!v.selectedVacancies != null}">
+                            <aura:iteration items="{!v.selectedVacancies}" var="selectedVacancy" indexVar="index">
+                                <div class="slds-panel__body layoutLittleCards">
+                                    <p>
+                                        <b>{!selectedVacancy.Name}</b>
+                                        <span class="spanButtonClose">
+                                            <lightning:buttonIcon value="{!selectedVacancy.Id}" name="{!index}" iconName="utility:close" variant="bare" size="small" alternativeText="Close" onclick="{!c.deselectTheCard}"/>
+                                        </span>
+                                    </p>
+                                    <p>{!selectedVacancy.Salary__c}</p>
+                                    <p>{!selectedVacancy.Location__c}</p>
+                                </div>
+                            </aura:iteration>
+                        </aura:if>
                     </div>
-                    <aura:if isTrue="{!v.selectedVacancies != null}">
-                        <aura:iteration items="{!v.selectedVacancies}" var="selectedVacancy" indexVar="index">
-                            <div class="slds-panel__body layoutLittleCards">
-                                <p>
-                                    <b>{!selectedVacancy.Name}</b>
-                                    <span class="spanButtonClose">
-                                        <lightning:buttonIcon value="{!selectedVacancy.Id}" name="{!index}" iconName="utility:close" variant="bare" size="small" alternativeText="Close" onclick="{!c.deselectTheCard}"/>
-                					</span>
-                                </p>
-                                <p>{!selectedVacancy.Salary__c}</p>
-                                <p>{!selectedVacancy.Location__c}</p>
-                            </div>
-    					</aura:iteration>
-                    </aura:if>
-                </span>
-    		</lightning:layout>
-            
-            <div class="slds-m-top_medium" >
-                <lightning:buttonGroup >
-                    <lightning:button disabled="{!v.startPage == 0}" onclick="{!c.previous}" iconName='utility:chevronleft'/>
-                    <lightning:button disabled="{!v.startPage == 0}" onclick="{!c.previous}" iconName='utility:chevronleft'/>
-                    &nbsp; #P &nbsp;
-                    <lightning:button disabled="{!v.endPage >= v.totalRecords}" onclick="{!c.next}" iconName='utility:chevronright' iconPosition='right'/>
-                    <lightning:button disabled="{!v.endPage >= v.totalRecords}" onclick="{!c.next}" iconName='utility:chevronright' iconPosition='right'/>
-                </lightning:buttonGroup>
-        	</div>
-            
-    	</div>
+                    
+                    <br/>
+                    <br/>
+                    <div class="slds-m-top_medium divPagination" >
+                        <lightning:buttonGroup>
+                            <lightning:button disabled="{!v.page == 1}" variant="brand" label="First" onclick="{!c.vacanciesPerPageInit}"/>&nbsp;
+                            <lightning:button disabled="{!v.page == 1}" variant="brand" label="Previous" onclick="{!c.navigate}"/>&nbsp;&nbsp;
+                            <lightning:button disabled="{!v.page == v.pages}" aura:id="previousPage" variant="brand" label="Next" onclick="{!c.navigate}"/>&nbsp;
+                            <lightning:button disabled="{!v.page == v.pages}" aura:id="previousPage" variant="brand" label="Last" onclick="{!c.navigate}"/>
+                        </lightning:buttonGroup>
         
-        <aura:if isTrue="{!v.popupIsOpen}">
-            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                <div class="slds-modal__container divPopup">
-                    <header class="slds-modal__header">
-                        <lightning:buttonIcon iconName="utility:close" onclick="{!c.closePopup}" alternativeText="Close" variant="bare-inverse" class="slds-modal__close"/>
-                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">My Resume</h2>
-                    </header>
-                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                        <div class="slds-grid">
-                        	<span class="slds-size_1-of-2 slds-m-around_x-small">
-								<lightning:input aura:id="requiredFieldIdName" type="text" class="namePopup" placeholder="Full Name" value="{!v.resume.Full_Name__c}" required="true"/>
-        						<lightning:input aura:id="requiredFieldIdAge" type="number" min="18" max="65" class="agePopup" placeholder="Age" value="{!v.resume.Age__c}" required="true"/>
-                            	<lightning:input aura:id="requiredFieldIdSalary" type="number" min="50000" max="999999" class="salaryPopup" placeholder="Salary" value="{!v.resume.Salary__c}" required="true"/>
-        						<lightning:input aura:id="requiredFieldIdEmail" type="email" class="emailPopup" placeholder="Email" value="{!v.resume.Email__c}" required="true"/> 
-                            	<lightning:input aura:id="requiredFieldIdPhone" type="phone" pattern="[0-9]*" class="phonePopup" placeholder="Phone" value="{!v.resume.Phone__c}" required="true"/>
-                            	<lightning:select aura:id="requiredFieldIdStatus" class="statusPopup" variant="label-hidden" label="" value="{!v.resume.Status__c}" required="true">
-                    				<option value="Status">Status</option>
-        							<option value="Employed">Employed</option>
-        							<option value="Unemployed">Unemployed</option>
-    							</lightning:select>
-                            	<lightning:textarea placeholder="Additional Info" value="{!v.resume.Additional_Info__c}"/>
-                        	</span>
-                            <span class="slds-size_2-of-2 slds-m-around_x-small">
-                            	<!--<lightning:fileUpload name="fileUploader" accept="image/*" recordId="abcd" onuploadfinished="{!c.handleUploadFinished}"/>-->
-                                <lightning:input type="file" name="file" accept="image/jpg, image/png, image/jpeg" id="photoFile" aura:id="inputFile" class="inputFile" onchange="{!c.handleFileSelected}"/>
-                                <div class="divImagePreview"><img class="imagePreview" aura:id="imagePreview" src="https://pngimage.net/wp-content/uploads/2018/06/no-profile-image-png.png"/></div>
-                            </span>
+                        <br/>
+                        <br/>
+                        <p class="slds-page-header__title slds-truncate">
+                            <aura:if isTrue="{!v.pages > v.page}">
+                                {!v.jobAdvertisements.length * v.page - (v.jobAdvertisements.length - 1)}/{!v.jobAdvertisements.length * v.page} Vacancies • page {!v.page}/{!v.pages}
+                                <aura:set attribute="else">
+                                    {!v.total - (v.jobAdvertisements.length - 1)}/{!v.total} Vacancies • page {!v.page}/{!v.pages}
+                                </aura:set>
+                            </aura:if>
+                        </p>
+                        <div class="slds-grid divPaginationBottomBlock">
+                            <label class="slds-form-element__label slds-size--2-of-3">Display records per Page:</label>
+                            <div class="slds-size--1-of-3 divPaginationSelect">
+                                <ui:inputSelect aura:id="recordSize" change="{!c.vacanciesPerPageInit}">
+                                    <ui:inputSelectOption text="10" label="10"/>
+                                    <ui:inputSelectOption text="15" label="15"/>
+                                    <ui:inputSelectOption text="20" label="20"/>
+                                </ui:inputSelect>
+                            </div>
                         </div>
                     </div>
-                    <footer class="slds-modal__footer">
-                        <lightning:button variant="brand" label="Send" title="Send" onclick="{!c.createResume}"/>
-                        <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{!c.closePopup}"/>
-                    </footer>
                 </div>
-            </section>
-            <div class="slds-backdrop slds-backdrop_open" description="Dark background is here"></div>
-        </aura:if>
-        
+    		</lightning:layout>
+            
+            
+            <aura:if isTrue="{!v.popupIsOpen}">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container divPopup">
+                        <header class="slds-modal__header">
+                            <lightning:buttonIcon iconName="utility:close" onclick="{!c.closePopup}" alternativeText="Close" variant="bare-inverse" class="slds-modal__close"/>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">My Resume</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <div class="slds-grid">
+                                <span class="slds-size_1-of-2 slds-m-around_x-small">
+                                    <lightning:input aura:id="requiredPopupField" type="text"
+                                                     pattern='^[A-Z]{1}[A-Za-z 0-9-]{1,12}$'
+                                                     class="namePopup" placeholder="Full Name" value="{!v.resume.Full_Name__c}"
+                                                     required="true"
+                                                     onchange="{!c.requiredFieldUpdate}"/>
+                                    <lightning:input aura:id="requiredPopupField" type="number" min="18" max="65" class="agePopup" placeholder="Age" value="{!v.resume.Age__c}"
+                                                     required="true"
+                                                     onchange="{!c.requiredFieldUpdate}"/>
+                                    <lightning:input aura:id="requiredPopupField" type="number" min="50000" max="999999" class="salaryPopup" placeholder="Salary" value="{!v.resume.Salary__c}"
+                                                     required="true"
+                                                     onchange="{!c.requiredFieldUpdate}"/>
+                                    <lightning:input aura:id="requiredPopupField" type="email"
+                                                     pattern="[\w-]+@([\w-]+\.)+[\w-]+"
+                                                     class="emailPopup" placeholder="Email" value="{!v.resume.Email__c}"
+                                                     required="true"
+                                                     onchange="{!c.requiredFieldUpdate}"/> 
+                                    <lightning:input aura:id="requiredPopupField" type="phone"
+                                                     pattern="^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*[a-z]*$"
+                                                     class="phonePopup" placeholder="Phone" value="{!v.resume.Phone__c}"
+                                                     required="true"
+                                                     onchange="{!c.requiredFieldUpdate}"/>
+                                    <lightning:select class="statusPopup" variant="label-hidden" label="" value="{!v.resume.Status__c}">
+                                        <option value="Unemployed">Unemployed</option>
+                                        <option value="Employed">Employed</option>
+                                    </lightning:select>
+                                    <lightning:textarea placeholder="Additional Info" value="{!v.resume.Additional_Info__c}"/>
+                                </span>
+                                <span class="slds-size_2-of-2 slds-m-around_x-small">
+                                    <lightning:input type="file" name="file" accept="image/jpg, image/png, image/jpeg" id="photoFile" aura:id="inputFile" class="inputFile" onchange="{!c.handleFileSelected}" disabled="{!v.disabled}"/>
+                                        
+                                    <div class="divImagePreview"><img class="imagePreview" aura:id="imagePreview"/></div>
+                                </span>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning:button variant="brand" label="Send" title="Send" onclick="{!c.createResume}" disabled="{!v.disabled}"/>
+                            <lightning:button variant="neutral" label="Cancel" title="Cancel" onclick="{!c.closePopup}"/>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open" description="Dark background is here"></div>
+            </aura:if>
+        </div>
     </div>
 </aura:component>
