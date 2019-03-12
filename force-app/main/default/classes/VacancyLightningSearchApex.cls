@@ -90,18 +90,13 @@ public with sharing class VacancyLightningSearchApex {
                 Resume__c resumeJunctionField = [SELECT Id, Position_ID__c FROM Resume__c WHERE Id =: resume.Id];
                 if(!resumeJunctionField.Position_ID__c.contains(jobAdvertisement.Position_ID__c)){
                     resumeJunctionField.Position_ID__c += ' ' + jobAdvertisement.Position_ID__c; 
-                    try{
-                        update resumeJunctionField;
-                    } catch(Exception e){
-                        System.debug('JunctionField error: ' + e.getMessage());
-                        //throw new AuraHandledException('JunctionField error: ' + e.getMessage());
-                    }
+                    update resumeJunctionField;
                 } else{
                     System.debug('You already have 1 or more of these vacancies in your resume.');
-                    String m = 'My cusom msg here';
+                    /*String m = 'My custom msg here';
                     AuraHandledException e = new AuraHandledException(m);
                     e.setMessage(m);
-                    throw e;
+                    throw e;*/
                     //throw new AuraHandledException('You already have 1 or more of these vacancies in your resume.');
                 }
             } 
